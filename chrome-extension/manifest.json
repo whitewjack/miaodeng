@@ -1,0 +1,60 @@
+{
+  "manifest_version": 3,
+  "name": "秒登 MiaoDeng - 自动登录助手",
+  "version": "3.55",
+  "description": "一键自动登录助手，支持多种登录方式（账号密码、OTP、Token），自动识别登录页面并填充凭据，提高工作效率。",
+  "author": "MiaoDeng Contributors",
+  "homepage_url": "https://github.com/whitewjack/miaodeng",
+
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+
+  "host_permissions": [
+    "http://localhost:6680/*",
+    "*://*.dragonpass.com.cn/*",
+    "*://*.dp-svc.com/*",
+    "*://*/*"
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon-16.png",
+      "32": "icon-32.png",
+      "48": "icon-48.png",
+      "128": "icon-128.png"
+    },
+    "default_title": "秒登 MiaoDeng"
+  },
+  "options_page": "options.html",
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.dragonpass.com.cn/*",
+        "*://*.dp-svc.com/*",
+        "*://*/*"
+      ],
+      "js": ["autosubmit-utils.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "icons": {
+    "16": "icon-16.png",
+    "32": "icon-32.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+
+  "offline_enabled": false,
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

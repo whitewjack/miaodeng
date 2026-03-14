@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Extract portal inline script
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path('sso-portal.html').read_text()
+          start = html.rfind('<script>')
+          end = html.rfind('</script>')
+          if start == -1 or end == -1 or end <= start:
+              raise SystemExit('inline script not found')
+          Path('/tmp/sso_portal_inline.js').write_text(html[start+len('<script>'):end])
+          print('/tmp/sso_portal_inline.js')
+          PY
+
+      - name: Frontend syntax check
+        run: |
+          node --check /tmp/sso_portal_inline.js
+          node --check chrome-extension/content.js
+          node --check chrome-extension/popup.js
+          node --check chrome-extension/background.js
+
+      - name: Python tests
+        run: |
+          python3 -m unittest tests.test_server_api tests.test_frontend_regressions -q
+
+      - name: Node tests
+        run: |
+          node --test tests/test_autosubmit_utils.mjs
+
+      - name: Docker Compose config check
+        run: |
+          docker compose config > /tmp/docker-compose.rendered.yml
+

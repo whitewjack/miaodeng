@@ -1,0 +1,36 @@
+{
+  auto_https off
+}
+
+# 秒登 HTTPS 反向代理（可选）
+# 启动方式：docker compose --profile secure up -d --build
+# 默认端口映射：
+#   http://localhost:8080
+#   https://localhost:8443  (Caddy internal CA 证书，首次访问浏览器会提示不受信任)
+
+:80 {
+  reverse_proxy sso-portal:6680
+
+  header {
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "SAMEORIGIN"
+    Referrer-Policy "strict-origin-when-cross-origin"
+    Permissions-Policy "geolocation=(), camera=(), microphone=(self)"
+    -Server
+  }
+}
+
+# 常见本机地址的 HTTPS 入口（可按需扩展）
+https://localhost, https://127.0.0.1, https://your-host.local {
+  tls internal
+  reverse_proxy sso-portal:6680
+
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "SAMEORIGIN"
+    Referrer-Policy "strict-origin-when-cross-origin"
+    Permissions-Policy "geolocation=(), camera=(), microphone=(self)"
+    -Server
+  }
+}

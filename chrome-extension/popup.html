@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  :root {
+    --bg: #141414;
+    --surface: #1f1f1f;
+    --surface-soft: #262626;
+    --line: #434343;
+    --text: #f5f5f5;
+    --text-soft: #bfbfbf;
+    --text-muted: #8c8c8c;
+    --primary: #1677ff;
+    --primary-soft: rgba(22,119,255,0.16);
+    --ok: #52c41a;
+    --warn: #faad14;
+    --err: #ff7875;
+    --radius: 10px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 360px;
+    max-height: 560px;
+    overflow-y: auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  body.popup-theme-light {
+    --bg: #f5f7fa;
+    --surface: #ffffff;
+    --surface-soft: #fafafa;
+    --line: #d9d9d9;
+    --text: #1f1f1f;
+    --text-soft: #595959;
+    --text-muted: #8c8c8c;
+    --primary: #1677ff;
+    --primary-soft: rgba(22,119,255,0.1);
+  }
+  body.popup-theme-classic {
+    --bg: #1a1a3e;
+    --surface: rgba(255,255,255,0.05);
+    --surface-soft: rgba(255,255,255,0.08);
+    --line: rgba(255,255,255,0.14);
+    --text: #ffffff;
+    --text-soft: #ccd6f6;
+    --text-muted: #4a5568;
+    --primary: #667eea;
+    --primary-soft: rgba(102,126,234,0.16);
+  }
+  body.popup-density-compact {
+    font-size: 12px;
+  }
+  .header {
+    padding: 12px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 10;
+  }
+  body.popup-theme-classic .header {
+    background: linear-gradient(135deg, #0f0c29, #302b63);
+  }
+  body.popup-theme-classic .header h1 {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  body.popup-theme-classic .header-sub { color: #7f8cc1; }
+  .header-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .header h1 { font-size: 15px; color: var(--text); }
+  .header-sub { font-size: 10px; color: var(--text-muted); }
+  .header-right { display: flex; align-items: center; gap: 6px; }
+  .gear-btn {
+    width: 28px; height: 28px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface-soft);
+    color: var(--text-soft);
+    cursor: pointer;
+    font-size: 14px;
+  }
+  body.popup-theme-classic .gear-btn { color: #7c87b3; }
+  .gear-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
+  .settings-panel {
+    display: none;
+    padding: 10px 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+  .settings-panel.show { display: block; }
+  .settings-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .settings-row:last-child { margin-bottom: 0; }
+  .settings-row.stack { display: block; }
+  .settings-row label {
+    font-size: 11px;
+    color: var(--text-soft);
+    white-space: nowrap;
+    min-width: 58px;
+  }
+  .settings-row.stack label {
+    display: block;
+    margin-bottom: 4px;
+    min-width: 0;
+  }
+  .settings-row input,
+  .settings-row select,
+  .settings-row textarea {
+    width: 100%;
+    flex: 1;
+    padding: 6px 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface-soft);
+    color: var(--text);
+    font-size: 11px;
+    outline: none;
+    font-family: inherit;
+  }
+  .settings-row input[type="checkbox"] {
+    width: 14px; height: 14px; flex: 0 0 auto; cursor: pointer;
+    accent-color: var(--primary);
+  }
+  .settings-row textarea {
+    min-height: 54px;
+    resize: vertical;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    line-height: 1.35;
+  }
+  .settings-row input:focus,
+  .settings-row select:focus,
+  .settings-row textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-soft);
+  }
+  .settings-row button {
+    padding: 6px 10px;
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    cursor: pointer;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .settings-tip {
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+  .quick-launch {
+    display: none;
+    padding: 8px 12px 10px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .quick-launch.show { display: block; }
+  .quick-launch-block + .quick-launch-block { margin-top: 8px; }
+  .quick-launch-title {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .quick-launch-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .quick-chip {
+    max-width: 100%;
+    padding: 6px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface-soft);
+    color: var(--text-soft);
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .quick-chip:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-soft);
+  }
+  .auth-panel {
+    margin: 10px 12px 12px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .auth-panel-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .auth-panel-sub {
+    margin-top: 4px;
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .auth-input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .auth-input-row input {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface-soft);
+    color: var(--text);
+    font-size: 12px;
+    outline: none;
+  }
+  .auth-input-row button {
+    padding: 8px 12px;
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .auth-panel-status {
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .version-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+  .version-text { font-size: 11px; color: var(--text-soft); }
+  .version-actions { display: flex; gap: 6px; }
+  .version-actions button {
+    padding: 5px 7px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface-soft);
+    color: var(--text-soft);
+    font-size: 10px;
+    cursor: pointer;
+  }
+  .version-actions button:hover { border-color: var(--primary); color: var(--primary); }
+  .update-status { margin-top: 6px; font-size: 10px; color: var(--text-muted); line-height: 1.45; }
+  .update-status.ok { color: var(--ok); }
+  .update-status.warn { color: var(--warn); }
+  .update-status.error { color: var(--err); }
+  .user-bar {
+    padding: 9px 12px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .user-avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #fff;
+  }
+  .user-name { font-size: 12px; color: var(--text); font-weight: 600; }
+  .user-change {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--primary);
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+  .search-box {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .search-box input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface-soft);
+    color: var(--text);
+    font-size: 12px;
+    outline: none;
+  }
+  .search-box input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-soft);
+  }
+  .search-box input::placeholder { color: var(--text-muted); }
+  .search-meta {
+    margin-top: 6px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 10px; color: var(--text-muted);
+  }
+  .search-meta .status-ok { color: var(--ok); }
+  .search-meta .status-error { color: var(--err); }
+  .search-flow {
+    margin-top: 4px;
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .action-bar {
+    padding: 8px 12px 10px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  .action-buttons button,
+  .action-buttons a {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface-soft);
+    color: var(--text-soft);
+    font-size: 11px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .action-buttons button.primary {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+  }
+  .action-buttons button:hover,
+  .action-buttons a:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .action-buttons button.primary:hover {
+    color: #fff;
+    opacity: 0.92;
+  }
+  .action-status {
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .action-status.ok { color: var(--ok); }
+  .action-status.error { color: var(--err); }
+  .system-list {
+    padding: 6px 0;
+    max-height: 340px;
+    overflow-y: auto;
+    background: var(--bg);
+  }
+  .system-item {
+    padding: 8px 12px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(128,128,128,0.09);
+  }
+  .system-item:hover { background: var(--primary-soft); }
+  .sys-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .sys-info { flex: 1; min-width: 0; }
+  .sys-name { font-size: 12px; font-weight: 600; color: var(--text); }
+  .sys-user {
+    margin-top: 1px;
+    font-size: 10px;
+    color: var(--primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .sys-user.muted {
+    color: var(--text-muted);
+  }
+  .sys-url {
+    margin-top: 1px;
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .sys-env {
+    font-size: 9px; padding: 2px 5px; border-radius: 999px;
+    font-weight: 700; letter-spacing: .3px; flex-shrink: 0;
+  }
+  .sys-arrow { color: var(--text-muted); font-size: 13px; flex-shrink: 0; }
+  .system-item:hover .sys-arrow { color: var(--primary); }
+  .env-test { background: rgba(250,173,20,0.2); color: #d48806; }
+  .env-uat { background: rgba(22,119,255,0.16); color: #1677ff; }
+  .env-dev { background: rgba(156,39,176,0.2); color: #9c27b0; }
+  .env-prod { background: rgba(82,196,26,0.2); color: #389e0d; }
+  .env-k8s { background: rgba(24,144,255,0.18); color: #0050b3; }
+  .env-other { background: rgba(128,128,128,0.2); color: #8c8c8c; }
+  .empty { text-align: center; color: var(--text-muted); font-size: 12px; padding: 30px 14px; }
+  .error { text-align: center; color: var(--err); font-size: 12px; padding: 20px 14px; line-height: 1.5; }
+  .footer {
+    padding: 9px 12px;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .footer a { color: var(--primary); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+
+  body.popup-density-compact .header { padding: 9px 10px; }
+  body.popup-density-compact .header h1 { font-size: 14px; }
+  body.popup-density-compact .settings-row { margin-bottom: 6px; }
+  body.popup-density-compact .settings-row label { font-size: 10px; }
+  body.popup-density-compact .settings-row input,
+  body.popup-density-compact .settings-row select,
+  body.popup-density-compact .settings-row textarea { font-size: 10px; padding: 5px 7px; }
+  body.popup-density-compact .user-bar,
+  body.popup-density-compact .search-box { padding: 7px 10px; }
+  body.popup-density-compact .system-item { padding: 7px 10px; }
+  body.popup-density-compact .sys-icon { width: 27px; height: 27px; font-size: 13px; }
+  body.popup-density-compact .sys-name { font-size: 11px; }
+  body.popup-density-compact .sys-url { font-size: 9px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div>
+      <h1>⚡ 秒登助手</h1>
+      <div class="header-sub">SSO Auto Login</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="gear-btn" id="gearBtn" title="设置">⚙️</button>
+  </div>
+</div>
+
+<!-- 设置面板（默认隐藏） -->
+<div class="settings-panel" id="settingsPanel">
+  <div class="settings-row">
+    <label>服务器地址</label>
+    <input type="text" id="serverUrl" placeholder="http://localhost:6680">
+    <button id="saveServerBtn">保存</button>
+  </div>
+  <div class="settings-row">
+    <label>默认用户</label>
+    <input type="text" id="popupUserInput" placeholder="例如：张三 / default">
+    <button id="clearPopupUserBtn">清空</button>
+  </div>
+  <div class="settings-row">
+    <label>主题</label>
+    <select id="themeMode">
+      <option value="classic">默认</option>
+      <option value="dark">黑色</option>
+      <option value="light">白色</option>
+    </select>
+  </div>
+  <div class="settings-row">
+    <label>间距</label>
+    <select id="densityMode">
+      <option value="standard">标准</option>
+      <option value="compact">紧凑</option>
+    </select>
+  </div>
+  <div class="settings-row">
+    <label>自动提交</label>
+    <input type="checkbox" id="autoSubmitEnabled">
+    <span style="font-size:10px;color:var(--text-soft);">默认开启</span>
+  </div>
+  <div class="settings-row stack">
+    <label>禁用自动提交域名（每行一个）</label>
+    <textarea id="noSubmitDomains" placeholder="login.example.com&#10;secure.example.com"></textarea>
+  </div>
+  <div class="version-row">
+    <div class="version-text" id="pluginVersionText">插件版本：v-</div>
+    <div class="version-actions">
+      <button id="checkUpdateBtn">检查更新</button>
+      <button id="openUpdateGuideBtn">更新指南</button>
+      <button id="openOptionsBtn">更多设置</button>
+    </div>
+  </div>
+  <div class="update-status" id="updateStatus">版本检测中...</div>
+  <div class="settings-tip">💡 同事使用时需改为你的电脑地址；可按需关闭自动提交或配置禁用域名</div>
+</div>
+
+<div class="user-bar" id="userBar">
+  <div class="user-avatar" id="popupAvatar" style="background:rgba(255,255,255,0.15);">👤</div>
+  <span class="user-name" id="popupUserName">加载中...</span>
+  <button class="user-change" id="changeUserBtn">切换用户</button>
+</div>
+
+<div class="search-box">
+  <input type="text" id="popupSearch" placeholder="🔍 搜索系统...">
+  <div class="search-meta">
+    <span id="systemCountText">0 个系统</span>
+    <span id="serverStatusText">连接中...</span>
+  </div>
+  <div class="search-flow" id="latestLoginFlowText">最近登录链路：暂无记录</div>
+</div>
+
+<div class="quick-launch" id="quickLaunchPanel"></div>
+
+<div class="action-bar">
+  <div class="action-buttons">
+    <button class="primary" id="sampleCurrentPageBtn">🛰 采样当前页</button>
+    <a href="" id="openRuleCenterBtn" target="_blank">🧠 规则中心</a>
+  </div>
+  <div class="action-status" id="samplerStatusText">可先打开真实登录页，再采样并一键带回规则中心。</div>
+</div>
+
+<div class="system-list" id="systemList">
+  <div class="empty">加载中...</div>
+</div>
+
+<div class="footer">
+  <a href="" id="portalLink" target="_blank">打开秒登管理页 →</a>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

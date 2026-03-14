@@ -1,0 +1,47 @@
+services:
+  sso-portal:
+    build:
+      context: .
+      args:
+        APP_VERSION: "3.55"
+    container_name: sso-portal
+    restart: unless-stopped
+    ports:
+      - "6680:6680"
+    environment:
+      APP_VERSION: "3.55"
+      PORT: 6680
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      DEFAULT_USER_PASSWORD: ${DEFAULT_USER_PASSWORD:-}
+      ENCRYPT_KEY: ${ENCRYPT_KEY:-}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-8}
+      REMEMBER_SESSION_TTL_DAYS: ${REMEMBER_SESSION_TTL_DAYS:-30}
+      BACKUP_INTERVAL_HOURS: ${BACKUP_INTERVAL_HOURS:-24}
+      BACKUP_RETENTION_COUNT: ${BACKUP_RETENTION_COUNT:-10}
+    volumes:
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys;sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:6680/api/user/check', timeout=3).getcode()==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  gateway:
+    build: ./deploy/nginx
+    container_name: sso-portal-gateway
+    profiles: ["secure"]
+    restart: unless-stopped
+    depends_on:
+      sso-portal:
+        condition: service_healthy
+    environment:
+      UPSTREAM_HOST: sso-portal
+      UPSTREAM_PORT: 6680
+      TLS_DOMAINS: ${TLS_DOMAINS:-localhost 127.0.0.1 your-host.local}
+      TLS_CERT_DAYS: ${TLS_CERT_DAYS:-825}
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./data/nginx-certs:/etc/nginx/certs

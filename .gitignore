@@ -1,0 +1,32 @@
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+.env
+.env.*
+!.env.docker.example
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.omx/
+.omc/
+
+# Runtime data / secrets
+data/*
+!data/.gitignore
+!data/README.md
+
+# Generated plugin archives
+*.zip
+!docs/**/*.zip
+*.db
+*.sqlite
+*.sqlite3
+*.key
+*.pem
+
+# Local misc
+server.log

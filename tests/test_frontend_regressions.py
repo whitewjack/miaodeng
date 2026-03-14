@@ -1,0 +1,47 @@
+from pathlib import Path
+import unittest
+
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+PORTAL_HTML = (ROOT_DIR / "sso-portal.html").read_text(encoding="utf-8")
+
+
+class FrontendRegressionTest(unittest.TestCase):
+    def test_hub_popup_launchers_stop_event_bubbling(self):
+        self.assertIn("function invokeHubAction(event, action) {", PORTAL_HTML)
+        self.assertIn("if (typeof event.stopPropagation === 'function') event.stopPropagation();", PORTAL_HTML)
+        expected_launchers = [
+            "onclick=\"invokeHubAction(event, \\'health\\')\"",
+            "onclick=\"invokeHubAction(event, \\'audit\\')\"",
+            "onclick=\"invokeHubAction(event, \\'backup\\')\"",
+            "onclick=\"invokeHubAction(event, \\'update-center\\')\"",
+            "onclick=\"invokeHubAction(event, \\'guide\\')\"",
+            "onclick=\"invokeHubAction(event, \\'supported\\')\"",
+            "onclick=\"invokeHubAction(event, \\'changelog\\')\"",
+            "onclick=\"invokeHubAction(event, \\'message\\')\"",
+        ]
+        for launcher in expected_launchers:
+            with self.subTest(launcher=launcher):
+                self.assertIn(launcher, PORTAL_HTML)
+
+    def test_focus_and_onboarding_popup_entries_are_guarded(self):
+        guarded_entries = [
+            "onclick=\"document.getElementById('installModal').classList.add('active')\"",
+            "onclick=\"event.stopPropagation();toggleGuidePopup()\"",
+            "onclick=\"event.stopPropagation();toggleUpdateCenterPopup()\"",
+        ]
+        for entry in guarded_entries:
+            with self.subTest(entry=entry):
+                self.assertIn(entry, PORTAL_HTML)
+
+    def test_card_action_spacing_prevents_favorite_delete_overlap(self):
+        self.assertIn(".card {\n    --card-top-actions-offset: 44px;\n  }", PORTAL_HTML)
+        self.assertIn(".card-actions {\n    position: absolute; top: 8px; right: var(--card-top-actions-offset); display: none; gap: 4px;\n  }", PORTAL_HTML)
+        self.assertIn(".card-favorite-btn { z-index: 3; }", PORTAL_HTML)
+        self.assertIn("body.enterprise-density .card {\n    --card-top-actions-offset: 38px;\n  }", PORTAL_HTML)
+        self.assertIn("body.enterprise-density .card-actions {\n    top: 6px;\n    gap: 3px;\n  }", PORTAL_HTML)
+        self.assertIn("body.enterprise-density .card-favorite-btn {\n    top: 6px;\n    right: 6px;\n    width: 23px;\n    height: 23px;", PORTAL_HTML)
+
+
+if __name__ == "__main__":
+    unittest.main()

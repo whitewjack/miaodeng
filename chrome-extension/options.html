@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>秒登插件设置</title>
+  <style>
+    :root {
+      --bg: #141414;
+      --surface: #1f1f1f;
+      --surface-soft: #262626;
+      --line: #434343;
+      --text: #f5f5f5;
+      --text-soft: #bfbfbf;
+      --text-muted: #8c8c8c;
+      --primary: #1677ff;
+      --primary-soft: rgba(22,119,255,0.14);
+      --ok: #52c41a;
+      --warn: #faad14;
+      --err: #ff7875;
+      --radius: 12px;
+      --shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      padding: 26px 18px 34px;
+    }
+    body.options-theme-light {
+      --bg: #f5f7fa;
+      --surface: #fff;
+      --surface-soft: #fafafa;
+      --line: #d9d9d9;
+      --text: #1f1f1f;
+      --text-soft: #595959;
+      --text-muted: #8c8c8c;
+      --primary: #1677ff;
+      --primary-soft: rgba(22,119,255,0.10);
+      --shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+    }
+    body.options-theme-classic {
+      --bg: #151433;
+      --surface: #1f1d45;
+      --surface-soft: #25235a;
+      --line: rgba(255,255,255,0.14);
+      --text: #fff;
+      --text-soft: #ccd6f6;
+      --text-muted: #8a98c7;
+      --primary: #667eea;
+      --primary-soft: rgba(102,126,234,0.2);
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+    body.options-density-compact { font-size: 13px; }
+    .wrap { max-width: 880px; margin: 0 auto; }
+    .header {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .header h1 { margin: 0; font-size: 20px; }
+    .header .sub { margin-top: 4px; color: var(--text-muted); font-size: 12px; }
+    .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn {
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      color: var(--text-soft);
+      border-radius: 9px;
+      padding: 8px 12px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
+    .btn.primary {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 12px;
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      color: var(--text);
+    }
+    .desc {
+      margin: -4px 0 10px;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 100px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .row:last-child { margin-bottom: 0; }
+    .row.stack {
+      grid-template-columns: 1fr;
+    }
+    label {
+      font-size: 12px;
+      color: var(--text-soft);
+      white-space: nowrap;
+    }
+    input[type="text"], select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-soft);
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-soft);
+    }
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.4;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    .switch-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .switch-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary); }
+    .switch-row span { color: var(--text-soft); font-size: 13px; }
+    .hint { color: var(--text-muted); font-size: 12px; line-height: 1.5; margin-top: 6px; }
+    .status {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      color: var(--text-soft);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .status.ok { color: var(--ok); border-color: rgba(82,196,26,0.36); background: rgba(82,196,26,0.10); }
+    .status.warn { color: var(--warn); border-color: rgba(250,173,20,0.36); background: rgba(250,173,20,0.10); }
+    .status.error { color: var(--err); border-color: rgba(255,120,117,0.38); background: rgba(255,120,117,0.10); }
+    .kv {
+      display: flex; justify-content: space-between; gap: 8px;
+      font-size: 12px; color: var(--text-soft);
+      margin-bottom: 8px;
+    }
+    .kv strong { color: var(--text); }
+    body.options-density-compact .panel { padding: 11px; }
+    body.options-density-compact .row { grid-template-columns: 90px 1fr auto; margin-bottom: 8px; }
+    body.options-density-compact input[type="text"],
+    body.options-density-compact select,
+    body.options-density-compact textarea { padding: 7px 8px; font-size: 12px; }
+    body.options-density-compact .btn { padding: 7px 10px; font-size: 12px; }
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      .header { flex-direction: column; align-items: stretch; }
+      .row { grid-template-columns: 1fr; }
+      .row > label { margin-bottom: -2px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <h1>⚙️ 秒登插件设置</h1>
+        <div class="sub">统一配置自动登录行为、主题与服务器连接</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn" id="openPortalBtn">打开秒登首页</button>
+        <button class="btn primary" id="saveAllBtn">保存设置</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="panel">
+          <h2>基础连接</h2>
+          <div class="row">
+            <label for="serverUrl">服务器地址</label>
+            <input type="text" id="serverUrl" placeholder="http://localhost:6680">
+            <button class="btn" id="testConnBtn">测试连接</button>
+          </div>
+          <div class="row">
+            <label for="ssoUser">默认用户</label>
+            <input type="text" id="ssoUser" placeholder="例如：default">
+            <button class="btn" id="clearUserBtn">清空</button>
+          </div>
+          <div class="hint">建议设置为同事常用账号；如果留空，插件按匿名用户访问。</div>
+          <div class="status" id="connStatus">等待检测</div>
+        </div>
+
+        <div class="panel">
+          <h2>自动提交策略</h2>
+          <div class="switch-row">
+            <input type="checkbox" id="autoSubmitEnabled">
+            <span>启用自动提交（默认开启）</span>
+          </div>
+          <div class="row stack">
+            <label for="noSubmitDomains">禁用自动提交域名（每行一个）</label>
+            <textarea id="noSubmitDomains" placeholder="login.example.com&#10;secure.example.com"></textarea>
+          </div>
+          <div class="hint">命中域名时，插件仅填充账号，不自动点击提交。</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <h2>显示外观</h2>
+          <div class="row">
+            <label for="themeMode">主题</label>
+            <select id="themeMode">
+              <option value="classic">默认</option>
+              <option value="dark">黑色</option>
+              <option value="light">白色</option>
+            </select>
+            <div></div>
+          </div>
+          <div class="row">
+            <label for="densityMode">间距</label>
+            <select id="densityMode">
+              <option value="standard">标准</option>
+              <option value="compact">紧凑</option>
+            </select>
+            <div></div>
+          </div>
+          <div class="hint">这两项会同步到插件弹窗 Popup 的展示效果。</div>
+        </div>
+
+        <div class="panel">
+          <h2>版本与升级</h2>
+          <div class="kv"><span>当前插件版本</span><strong id="pluginVersionText">v-</strong></div>
+          <div class="row" style="grid-template-columns:1fr 1fr;gap:8px;">
+            <button class="btn" id="checkUpdateBtn">检查更新</button>
+            <button class="btn" id="openUpdateGuideBtn">更新指南</button>
+          </div>
+          <div class="status" id="updateStatus">版本检测中...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status" id="saveStatus">尚未保存</div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
