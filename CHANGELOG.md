@@ -1,5 +1,29 @@
 # 秒登 MiaoDeng 更新日志
 
+## 2026-03-15 · v3.58
+
+### 🖼 模块21：GitHub 双语视觉升级 / 登录跳转演示
+- [优化] 重做 GitHub 首页 `banner.svg`，将标题、副标题与关键信息改成更清晰的中英双语表达，首屏识别度更高。
+- [新增] 新增 `docs/assets/github/login-flow.gif`，用 4 步动态图示展示“点击系统卡片 → 命中规则 → 自动填充 → 自动登录”的完整跳转链路。
+- [新增] 新增 `scripts/generate_github_assets.py`，沉淀 GitHub 视觉素材生成脚本，后续可继续复用生成 banner / GIF。
+- [优化] README 中英版新增演示区域，并把示意说明改成中英双语，方便国内外用户快速理解产品链路。
+- [优化] Docker / 插件版本号同步提升到 `3.58`，安装说明与镜像元数据版本同步更新。
+
+### 🧪 验证
+- [资源] 已执行 `python3 scripts/generate_github_assets.py` 成功生成双语 banner 与 GIF 演示资源。
+- [文档] 本模块完成后继续执行门户脚本语法检查（`node --check /tmp/sso_portal_inline.js`）、插件脚本语法检查（`node --check chrome-extension/content.js` / `popup.js` / `background.js`）、Python 单元测试（`python3 -m unittest tests.test_server_api tests.test_frontend_regressions -q`）、Node 测试（`node --test tests/test_autosubmit_utils.mjs`）以及 Docker 配置校验（`docker compose config`）。
+
+## 2026-03-15 · v3.57
+
+### 📚 模块20：API / 部署文档补齐
+- [新增] 新增 `API.md`，对认证、系统管理、登录规则、审计、备份、版本中心等主要接口进行集中整理，方便开源用户快速接入。
+- [新增] 新增 `DEPLOYMENT.md`，补齐 Docker 部署、本地 Python 启动、secure 网关、健康检查与升级流程说明。
+- [优化] README 中英版新增 `API.md` / `DEPLOYMENT.md` 入口，开源仓库文档导航更完整。
+- [优化] 继续完善 GitHub 首屏信息架构，方便外部开发者从 README 快速跳转到接入、部署与架构文档。
+
+### 🧪 验证
+- [文档] 本模块完成后已执行门户脚本语法检查（`node --check /tmp/sso_portal_inline.js`）、插件脚本语法检查（`node --check chrome-extension/content.js` / `popup.js` / `background.js`）、Python 单元测试（`python3 -m unittest tests.test_server_api tests.test_frontend_regressions -q`）、Node 测试（`node --test tests/test_autosubmit_utils.mjs`）以及 Docker 配置校验（`docker compose config`）。
+
 ## 2026-03-15 · v3.56
 
 ### 🖼 模块19：GitHub 首页展示增强 / 架构文档补齐
