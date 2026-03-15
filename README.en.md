@@ -6,13 +6,6 @@
 
 Self-hosted portal and Chrome extension for internal system auto-login.
 
-## Login Jump Demo
-
-![MiaoDeng login jump flow demo / 秒登登录跳转流程演示](./docs/assets/github/login-flow.gif)
-
-Click a system card in the portal, let the extension detect the login page, auto-fill credentials, and jump into the target system.  
-从门户点击系统卡片，插件识别登录页并自动填充，一键跳转登录。
-
 ## What it does
 
 - Centralized portal for internal systems

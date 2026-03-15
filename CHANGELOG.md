@@ -1,5 +1,16 @@
 # 秒登 MiaoDeng 更新日志
 
+## 2026-03-15 · v3.59
+
+### 🧹 模块22：GitHub 首页素材收敛 / Banner 重做
+- [移除] 删除 README 中的 GIF 登录演示，避免首页出现质量不稳定的动态图素材。
+- [优化] 重做 `docs/assets/github/banner.svg`，改为更简洁的开源首页风格，去掉复杂伪界面，突出产品名、定位和核心能力。
+- [优化] README 中英版首页信息收敛，保留首屏核心介绍，减少干扰项。
+- [优化] Docker / 插件 / 安装文档版本同步提升到 `3.59`。
+
+### 🧪 验证
+- [文档] 本模块完成后继续执行门户脚本语法检查（`node --check /tmp/sso_portal_inline.js`）、插件脚本语法检查（`node --check chrome-extension/content.js` / `popup.js` / `background.js`）、Python 单元测试（`python3 -m unittest tests.test_server_api tests.test_frontend_regressions -q`）、Node 测试（`node --test tests/test_autosubmit_utils.mjs`）以及 Docker 配置校验（`docker compose config`）。
+
 ## 2026-03-15 · v3.58
 
 ### 🖼 模块21：GitHub 双语视觉升级 / 登录跳转演示

@@ -12,13 +12,6 @@
 
 它提供统一入口、账号凭据托管、规则化登录页适配、浏览器自动填充与一键跳转，适合测试 / UAT / 运维 / 内部平台等多系统高频登录场景。
 
-## 登录跳转演示
-
-![秒登登录跳转流程演示 / MiaoDeng login jump flow demo](./docs/assets/github/login-flow.gif)
-
-从门户点击系统卡片，插件识别登录页并自动填充，一键跳转登录。  
-Click a system card in the portal, let the extension detect the login page, auto-fill credentials, and jump into the target system.
-
 ## 项目组成
 
 - **门户端**：系统卡片、凭据管理、规则中心、更新中心、审计与备份能力
@@ -52,7 +45,7 @@ docker compose logs -f sso-portal
 
 - 门户：`http://localhost:6680`
 - 数据目录：`./data`
-- 当前内置镜像元数据版本：`3.58`
+- 当前内置镜像元数据版本：`3.59`
 
 如需启用内置 HTTPS 网关：
 
