@@ -2,6 +2,8 @@
 
 [中文 README](./README.md)
 
+![MiaoDeng banner](./docs/assets/github/banner.svg)
+
 Self-hosted portal and Chrome extension for internal system auto-login.
 
 ## What it does
@@ -101,8 +103,9 @@ See:
 
 - [`SECURITY.md`](./SECURITY.md)
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+- [`ARCHITECTURE.md`](./ARCHITECTURE.md)
+- [`ROADMAP.md`](./ROADMAP.md)
 
 ## License
 
 MIT
-

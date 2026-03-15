@@ -6,6 +6,8 @@
 ![Release](https://img.shields.io/github/v/release/whitewjack/miaodeng)
 ![CI](https://img.shields.io/github/actions/workflow/status/whitewjack/miaodeng/ci.yml?branch=main)
 
+![MiaoDeng banner](./docs/assets/github/banner.svg)
+
 一个面向团队内部系统的 **自托管自动登录门户 + Chrome 插件**。
 
 它提供统一入口、账号凭据托管、规则化登录页适配、浏览器自动填充与一键跳转，适合测试 / UAT / 运维 / 内部平台等多系统高频登录场景。
@@ -175,6 +177,8 @@ docker compose config
 - 功能改动：欢迎提 PR
 - 安全问题：请先查看 [`SECURITY.md`](./SECURITY.md)
 - 参与方式：见 [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+- 系统架构：见 [`ARCHITECTURE.md`](./ARCHITECTURE.md)
+- 路线图：见 [`ROADMAP.md`](./ROADMAP.md)
 
 ## 仓库说明
 

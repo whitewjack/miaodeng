@@ -1,5 +1,17 @@
 # 秒登 MiaoDeng 更新日志
 
+## 2026-03-15 · v3.56
+
+### 🖼 模块19：GitHub 首页展示增强 / 架构文档补齐
+- [新增] 新增轻量级 GitHub 首页 banner（`docs/assets/github/banner.svg`），用于提升仓库首页辨识度与产品感。
+- [新增] 新增 `ARCHITECTURE.md`，补齐门户、后端、插件、规则中心与部署结构说明，方便开源用户快速理解系统边界。
+- [新增] 新增 `ROADMAP.md`，把当前能力、下一步规划与长期方向独立沉淀，便于社区协作。
+- [优化] README / README.en 新增 banner、架构文档与路线图入口，让 GitHub 首页信息结构更完整。
+- [修复] 公众号隐私清理后，继续完成仓库收口，移除对应引用并保持开源仓库的轻量化方向。
+
+### 🧪 验证
+- [文档] 本模块完成后已执行门户脚本语法检查（`node --check /tmp/sso_portal_inline.js`）、插件脚本语法检查（`node --check chrome-extension/content.js` / `popup.js` / `background.js`）、Python 单元测试（`python3 -m unittest tests.test_server_api tests.test_frontend_regressions -q`）、Node 测试（`node --test tests/test_autosubmit_utils.mjs`）以及 Docker 配置校验（`docker compose config`）。
+
 ## 2026-03-15 · v3.55
 
 ### 🌟 模块18：GitHub 开源仓库美化 / 首个发布准备

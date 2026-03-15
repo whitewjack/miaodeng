@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-ARG APP_VERSION=3.55
+ARG APP_VERSION=3.56
 LABEL org.opencontainers.image.title="sso-portal" \
       org.opencontainers.image.version="${APP_VERSION}" \
       org.opencontainers.image.description="秒登 MiaoDeng 自动登录门户与插件服务" \
