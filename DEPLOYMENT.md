@@ -1,5 +1,18 @@
 # Deployment
 
+## Deployment architecture
+
+MiaoDeng is currently a **single-service deployment**:
+
+- `server.py` serves the frontend page (`/sso-portal.html`)
+- `server.py` also serves all backend APIs (`/api/*`)
+
+That means:
+
+- Docker already deploys **frontend + backend together**
+- local `python3 server.py` also starts **frontend + backend together**
+- if you use Nginx, you usually only need to reverse-proxy **one upstream port: `6680`**
+
 ## Recommended deployment: Docker
 
 ### 1. Prepare environment
@@ -25,6 +38,8 @@ docker compose logs -f sso-portal
 ### 3. Access
 
 - Portal: `http://localhost:6680`
+- Frontend page: `http://localhost:6680/sso-portal.html`
+- API base: `http://localhost:6680/api/`
 
 Data persistence:
 
@@ -48,6 +63,7 @@ Notes:
 
 - default certificate is self-signed
 - browser warning on first visit is expected
+- this gateway is only a reverse proxy in front of the same app service
 
 ## Environment variables
 
@@ -93,6 +109,46 @@ Default URL:
 ```text
 http://localhost:6680
 ```
+
+This same process serves:
+
+- frontend page
+- backend API
+- static assets such as the extension manifest
+
+## Use your own Nginx
+
+If you already operate Nginx outside Docker, you do not need to split frontend and backend into separate services. Reverse-proxy the same MiaoDeng upstream process.
+
+### Minimal HTTP reverse proxy example
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.example.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:6680;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+### If you want HTTPS
+
+Terminate TLS in Nginx as usual, then keep proxying to:
+
+```text
+http://127.0.0.1:6680
+```
+
+### When to use the built-in gateway instead
+
+Use `docker compose --profile secure up -d` if you want the repository-provided Nginx gateway and self-signed certificate flow out of the box.
 
 ## Health verification
 
@@ -140,4 +196,3 @@ Before publishing your own fork or deployment template:
 - do not commit `data/` real files
 - do not commit DB / backup / key / cert files
 - do not expose real internal URLs in screenshots or docs
-

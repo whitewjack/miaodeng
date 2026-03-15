@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "秒登 MiaoDeng - 自动登录助手",
-  "version": "3.59",
+  "version": "3.61",
   "description": "一键自动登录助手，支持多种登录方式（账号密码、OTP、Token），自动识别登录页面并填充凭据，提高工作效率。",
   "author": "MiaoDeng Contributors",
   "homepage_url": "https://github.com/whitewjack/miaodeng",

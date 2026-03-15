@@ -2,9 +2,9 @@
 
 [中文 README](./README.md)
 
-![MiaoDeng banner](./docs/assets/github/banner.svg)
-
 Self-hosted portal and Chrome extension for internal system auto-login.
+
+> Deployment note: the project is currently **frontend + backend in one service**. `server.py` serves both the portal page (`/sso-portal.html`) and backend APIs (`/api/*`), so Docker and local Python startup both bring up the full application together.
 
 ## What it does
 
@@ -35,6 +35,34 @@ Default URL:
 
 ```bash
 python3 server.py
+```
+
+This starts all of the following together:
+
+- Frontend page: `http://localhost:6680/sso-portal.html`
+- Default entry: `http://localhost:6680`
+- Backend API: `http://localhost:6680/api/*`
+
+### Use your own Nginx / reverse proxy
+
+If you already have Nginx, you do **not** need to deploy a separate frontend site. Just reverse-proxy the same upstream port `6680`, because both the page and the API are served by `server.py`.
+
+Minimal example:
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.example.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:6680;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
 ```
 
 ## Install the Chrome Extension

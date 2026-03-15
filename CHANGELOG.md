@@ -1,5 +1,17 @@
 # 秒登 MiaoDeng 更新日志
 
+## 2026-03-15 · v3.61
+
+### 🧾 模块23：README 首屏去图化 / 门户首页增加 GitHub 开源入口
+- [移除] 去掉 README 中英版首页 Banner 图片，改为纯文字首屏，避免 GitHub 首页展示与产品风格不一致。
+- [新增] 门户首页 Header 下新增 GitHub 开源入口区，提供仓库、Stars、Issues、Release 四类常用链接，展示形式对齐常见开源项目站点。
+- [补充] README / README.en / `DEPLOYMENT.md` 补充“前后端一体部署”说明，明确 Docker 默认已包含前端页面与后端 API，并新增自定义 Nginx 反向代理示例。
+- [清理] 移除仓库中的 `docs/assets/github/banner.svg`，继续收敛非必要展示素材，保持开源仓库简洁。
+- [优化] Docker / 插件 / 安装文档版本同步提升到 `3.61`。
+
+### 🧪 验证
+- [文档] 本模块完成后继续执行门户脚本语法检查（`node --check /tmp/sso_portal_inline.js`）、插件脚本语法检查（`node --check chrome-extension/content.js` / `popup.js` / `background.js`）、Python 单元测试（`python3 -m unittest tests.test_server_api tests.test_frontend_regressions -q`）、Node 测试（`node --test tests/test_autosubmit_utils.mjs`）以及 Docker 配置校验（`docker compose config`）。
+
 ## 2026-03-15 · v3.59
 
 ### 🧹 模块22：GitHub 首页素材收敛 / Banner 重做

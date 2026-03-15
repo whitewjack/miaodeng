@@ -6,11 +6,11 @@
 ![Release](https://img.shields.io/github/v/release/whitewjack/miaodeng)
 ![CI](https://img.shields.io/github/actions/workflow/status/whitewjack/miaodeng/ci.yml?branch=main)
 
-![MiaoDeng banner](./docs/assets/github/banner.svg)
-
 一个面向团队内部系统的 **自托管自动登录门户 + Chrome 插件**。
 
 它提供统一入口、账号凭据托管、规则化登录页适配、浏览器自动填充与一键跳转，适合测试 / UAT / 运维 / 内部平台等多系统高频登录场景。
+
+> 部署说明：本项目当前为**前后端一体部署**。`server.py` 会同时提供门户前端页面（`/sso-portal.html`）和后端 API（`/api/*`），所以无论是 Docker 还是本地 Python 启动，默认都会把前端和后端一起启动。
 
 ## 项目组成
 
@@ -45,7 +45,7 @@ docker compose logs -f sso-portal
 
 - 门户：`http://localhost:6680`
 - 数据目录：`./data`
-- 当前内置镜像元数据版本：`3.59`
+- 当前内置镜像元数据版本：`3.61`
 
 如需启用内置 HTTPS 网关：
 
@@ -65,6 +65,36 @@ docker compose --profile secure up -d
 ```bash
 python3 server.py
 ```
+
+启动后同样会同时提供：
+
+- 前端页面：`http://localhost:6680/sso-portal.html`
+- 默认入口：`http://localhost:6680`
+- 后端接口：`http://localhost:6680/api/*`
+
+### 方式三：接入你自己的 Nginx / 反向代理
+
+如果你已经有自己的 Nginx，不需要再单独部署一个前端站点，**直接把同一个上游 `6680` 端口反向代理出去即可**，因为前端页面和 API 都由 `server.py` 提供。
+
+最小示例：
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.example.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:6680;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+如果你使用 HTTPS，也只需要在这个反向代理层处理证书即可。
 
 ## 插件安装
 

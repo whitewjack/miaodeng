@@ -24,6 +24,31 @@
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
   .header p { color: var(--text-secondary); font-size: 14px; }
+  .header-open-source {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .header-open-source a {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .header-open-source a:hover {
+    transform: translateY(-1px);
+    border-color: rgba(102,126,234,0.45);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+  }
+  .header-open-source img {
+    display: block;
+    height: 28px;
+  }
   .header-lang-switch {
     position: absolute;
     top: 20px;
@@ -2645,6 +2670,20 @@
 <div class="header">
   <h1>⚡ 秒登</h1>
   <p id="headerSubtitle">选择系统，一键自动登录</p>
+  <div class="header-open-source">
+    <a href="https://github.com/whitewjack/miaodeng" target="_blank" rel="noopener noreferrer" title="GitHub Repository">
+      <img src="https://img.shields.io/badge/GitHub-whitewjack%2Fmiaodeng-181717?style=flat-square&logo=github" alt="GitHub Repository">
+    </a>
+    <a href="https://github.com/whitewjack/miaodeng/stargazers" target="_blank" rel="noopener noreferrer" title="GitHub Stars">
+      <img src="https://img.shields.io/github/stars/whitewjack/miaodeng?style=flat-square&logo=github" alt="GitHub Stars">
+    </a>
+    <a href="https://github.com/whitewjack/miaodeng/issues" target="_blank" rel="noopener noreferrer" title="GitHub Issues">
+      <img src="https://img.shields.io/github/issues/whitewjack/miaodeng?style=flat-square&logo=github" alt="GitHub Issues">
+    </a>
+    <a href="https://github.com/whitewjack/miaodeng/releases" target="_blank" rel="noopener noreferrer" title="GitHub Releases">
+      <img src="https://img.shields.io/github/v/release/whitewjack/miaodeng?style=flat-square&logo=github" alt="GitHub Release">
+    </a>
+  </div>
   <button id="langToggleBtn" class="header-lang-switch" onclick="toggleLanguageMode()" title="切换语言 / Switch language">🌐 中文</button>
   <div class="theme-switch" onclick="toggleTheme()" title="切换主题 (Ctrl+Shift+T)">
     <span class="icon-sun">☀️</span>
