@@ -1,5 +1,16 @@
 # 秒登 MiaoDeng 更新日志
 
+## 2026-03-15 · v3.62
+
+### 🌟 模块24：门户首页 GitHub 数据实时化
+- [优化] 将门户首页的 GitHub 开源入口从静态 badge 图片改为真实数据卡片，避免 Stars / Issues 因第三方缓存长期不更新。
+- [新增] 服务端新增 `/api/open-source-stats`，拉取 GitHub 仓库 Stars、Forks、Issues 与最新 Release 信息，并供首页统一读取。
+- [优化] GitHub 开源数据增加短时缓存，刷新首页后可更快看到最新 Star 变化，同时避免频繁请求 GitHub API。
+- [优化] Docker / 插件 / 安装文档版本同步提升到 `3.62`。
+
+### 🧪 验证
+- [文档] 本模块完成后继续执行门户脚本语法检查（`node --check /tmp/sso_portal_inline.js`）、插件脚本语法检查（`node --check chrome-extension/content.js` / `popup.js` / `background.js`）、Python 单元测试（`python3 -m unittest tests.test_server_api tests.test_frontend_regressions -q`）、Node 测试（`node --test tests/test_autosubmit_utils.mjs`）、Docker 配置校验（`docker compose config`）以及接口验证（`/api/open-source-stats`、`/api/version-center`）。
+
 ## 2026-03-15 · v3.61
 
 ### 🧾 模块23：README 首屏去图化 / 门户首页增加 GitHub 开源入口

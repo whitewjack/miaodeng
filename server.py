@@ -52,6 +52,8 @@ BACKUP_STARTUP_MIN_INTERVAL_SECONDS_DEFAULT = 60 * 60
 BACKUP_LOCK = threading.RLock()
 BACKUP_SCHEDULER_STARTED = False
 SERVER_START_TS = int(time.time())
+OPEN_SOURCE_STATS_CACHE = {'expires_at': 0, 'payload': None}
+OPEN_SOURCE_STATS_LOCK = threading.Lock()
 LOCAL_DEV_ORIGIN_PREFIXES = (
     'http://localhost',
     'http://127.0.0.1',
@@ -1712,6 +1714,147 @@ def _extract_latest_release_from_changelog():
     }
 
 
+def _fetch_remote_json(url, timeout=6):
+    req = urllib.request.Request(url, method='GET')
+    req.add_header('User-Agent', 'MiaoDeng-OpenSourceStats/1.0')
+    req.add_header('Accept', 'application/vnd.github+json')
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return json.loads(resp.read().decode('utf-8'))
+
+
+def _fetch_remote_text(url, timeout=8):
+    req = urllib.request.Request(url, method='GET')
+    req.add_header('User-Agent', 'Mozilla/5.0 MiaoDeng-OpenSourceStats/1.0')
+    req.add_header('Accept', 'text/html,application/xhtml+xml')
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return resp.read().decode('utf-8', 'ignore')
+
+
+def _extract_html_count(html, pattern):
+    m = re.search(pattern, html or '', re.S)
+    if not m:
+        return 0
+    raw = str(m.group(1) or '').replace(',', '').strip()
+    try:
+        return int(raw)
+    except Exception:
+        return 0
+
+
+def _extract_html_text(html, pattern):
+    m = re.search(pattern, html or '', re.S)
+    if not m:
+        return ''
+    return str(m.group(1) or '').strip()
+
+
+def _extract_shields_text_values(svg_text):
+    return [item.strip() for item in re.findall(r'<text [^>]*>([^<]+)</text>', svg_text or '', re.S) if str(item or '').strip()]
+
+
+def get_open_source_stats_payload():
+    now = int(time.time())
+    with OPEN_SOURCE_STATS_LOCK:
+        cached = OPEN_SOURCE_STATS_CACHE.get('payload')
+        if cached and OPEN_SOURCE_STATS_CACHE.get('expires_at', 0) > now:
+            return cached
+
+    repo_url = 'https://github.com/whitewjack/miaodeng'
+    payload = {
+        'ok': True,
+        'source': 'github',
+        'fetched_at': now,
+        'repo': {
+            'name': 'whitewjack/miaodeng',
+            'url': repo_url,
+            'stars': 0,
+            'forks': 0,
+            'issues': 0,
+            'stars_url': repo_url + '/stargazers',
+            'forks_url': repo_url + '/forks',
+            'issues_url': repo_url + '/issues',
+            'releases_url': repo_url + '/releases',
+        },
+        'release': {
+            'tag': '',
+            'url': repo_url + '/releases',
+        }
+    }
+    try:
+        repo = _fetch_remote_json('https://api.github.com/repos/whitewjack/miaodeng')
+        release = None
+        try:
+            release = _fetch_remote_json('https://api.github.com/repos/whitewjack/miaodeng/releases/latest')
+        except Exception:
+            release = None
+        payload['repo'].update({
+            'name': str(repo.get('full_name') or payload['repo']['name']),
+            'url': str(repo.get('html_url') or repo_url),
+            'stars': int(repo.get('stargazers_count') or 0),
+            'forks': int(repo.get('forks_count') or 0),
+            'issues': int(repo.get('open_issues_count') or 0),
+            'stars_url': str(repo.get('html_url') or repo_url) + '/stargazers',
+            'forks_url': str(repo.get('html_url') or repo_url) + '/forks',
+            'issues_url': str(repo.get('html_url') or repo_url) + '/issues',
+            'releases_url': str(repo.get('html_url') or repo_url) + '/releases',
+        })
+        if isinstance(release, dict):
+            payload['release'].update({
+                'tag': str(release.get('tag_name') or ''),
+                'url': str(release.get('html_url') or payload['repo']['releases_url']),
+            })
+    except Exception as e:
+        payload['ok'] = False
+        payload['error'] = str(e)[:160]
+        try:
+            stars_svg = _fetch_remote_text('https://img.shields.io/github/stars/whitewjack/miaodeng?style=flat-square&cacheSeconds=30')
+            forks_svg = _fetch_remote_text('https://img.shields.io/github/forks/whitewjack/miaodeng?style=flat-square&cacheSeconds=30')
+            issues_svg = _fetch_remote_text('https://img.shields.io/github/issues/whitewjack/miaodeng?style=flat-square&cacheSeconds=30')
+            release_svg = _fetch_remote_text('https://img.shields.io/github/v/release/whitewjack/miaodeng?style=flat-square&cacheSeconds=30')
+            star_values = _extract_shields_text_values(stars_svg)
+            fork_values = _extract_shields_text_values(forks_svg)
+            issue_title = _extract_html_text(issues_svg, r'<title>([^<]+)</title>')
+            release_title = _extract_html_text(release_svg, r'<title>([^<]+)</title>')
+            payload['repo'].update({
+                'stars': int((star_values[-1] if star_values else '0').replace(',', '') or 0),
+                'forks': int((fork_values[-1] if fork_values else '0').replace(',', '') or 0),
+                'issues': _extract_html_count(issue_title, r'issues:\s*([0-9][0-9,]*)'),
+            })
+            release_tag = _extract_html_text(release_title, r'release:\s*([^\s]+)')
+            if release_tag:
+                payload['release'].update({
+                    'tag': release_tag,
+                    'url': payload['repo']['releases_url'] + '/tag/' + release_tag,
+                })
+                payload['ok'] = True
+                payload.pop('error', None)
+        except Exception:
+            try:
+                repo_html = _fetch_remote_text(repo_url)
+                payload['repo'].update({
+                    'stars': _extract_html_count(repo_html, r'<a href="/whitewjack/miaodeng/stargazers"[^>]*>.*?<strong>([0-9][0-9,]*)</strong>'),
+                    'forks': _extract_html_count(repo_html, r'<a href="/whitewjack/miaodeng/forks"[^>]*>.*?<strong>([0-9][0-9,]*)</strong>'),
+                    'issues': _extract_html_count(repo_html, r'href="/whitewjack/miaodeng/issues"[^>]*>.*?<span[^>]*class="Counter">([0-9][0-9,]*)</span>'),
+                })
+                release_tag = _extract_html_text(repo_html, r'href="/whitewjack/miaodeng/releases/tag/([^"]+)"')
+                if release_tag:
+                    payload['release'].update({
+                        'tag': release_tag,
+                        'url': payload['repo']['releases_url'] + '/tag/' + release_tag,
+                    })
+            except Exception:
+                latest_release = _extract_latest_release_from_changelog()
+                payload['release'].update({
+                    'tag': str(latest_release.get('version') or ''),
+                    'url': payload['repo']['releases_url'],
+                })
+
+    with OPEN_SOURCE_STATS_LOCK:
+        OPEN_SOURCE_STATS_CACHE['payload'] = payload
+        OPEN_SOURCE_STATS_CACHE['expires_at'] = now + 30
+    return payload
+
+
 def get_version_center_payload():
     latest_release = _extract_latest_release_from_changelog()
     ext_manifest = _read_json_dict_file(os.path.join(DIR, 'chrome-extension', 'manifest.json'))
@@ -1965,6 +2108,8 @@ class SSOHandler(SimpleHTTPRequestHandler):
             })
         elif path == '/api/version-center':
             self._json_response(get_version_center_payload())
+        elif path == '/api/open-source-stats':
+            self._json_response(get_open_source_stats_payload())
         elif path == '/api/likes':
             # 获取点赞数据
             self._json_response(load_likes())

@@ -45,7 +45,7 @@ docker compose logs -f sso-portal
 
 - 门户：`http://localhost:6680`
 - 数据目录：`./data`
-- 当前内置镜像元数据版本：`3.61`
+- 当前内置镜像元数据版本：`3.62`
 
 如需启用内置 HTTPS 网关：
 

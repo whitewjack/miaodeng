@@ -34,10 +34,14 @@
   .header-open-source a {
     display: inline-flex;
     align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
     border-radius: 999px;
-    overflow: hidden;
     border: 1px solid rgba(255,255,255,0.12);
     background: rgba(255,255,255,0.04);
+    color: #dbe5ff;
+    font-size: 12px;
+    text-decoration: none;
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
   .header-open-source a:hover {
@@ -45,9 +49,21 @@
     border-color: rgba(102,126,234,0.45);
     box-shadow: 0 10px 24px rgba(0,0,0,0.22);
   }
-  .header-open-source img {
-    display: block;
-    height: 28px;
+  .header-open-source .oss-label {
+    color: #93a4d7;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .header-open-source .oss-value {
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 12px;
+  }
+  .header-open-source .oss-sep {
+    width: 1px;
+    height: 12px;
+    background: rgba(255,255,255,0.12);
   }
   .header-lang-switch {
     position: absolute;
@@ -2672,16 +2688,29 @@
   <p id="headerSubtitle">选择系统，一键自动登录</p>
   <div class="header-open-source">
     <a href="https://github.com/whitewjack/miaodeng" target="_blank" rel="noopener noreferrer" title="GitHub Repository">
-      <img src="https://img.shields.io/badge/GitHub-whitewjack%2Fmiaodeng-181717?style=flat-square&logo=github" alt="GitHub Repository">
+      <span class="oss-label">GitHub</span>
+      <span class="oss-sep"></span>
+      <span class="oss-value">whitewjack/miaodeng</span>
     </a>
     <a href="https://github.com/whitewjack/miaodeng/stargazers" target="_blank" rel="noopener noreferrer" title="GitHub Stars">
-      <img src="https://img.shields.io/github/stars/whitewjack/miaodeng?style=flat-square&logo=github" alt="GitHub Stars">
+      <span class="oss-label" id="ossStarsLabel">Stars</span>
+      <span class="oss-sep"></span>
+      <span class="oss-value" id="ossStarsValue">--</span>
+    </a>
+    <a href="https://github.com/whitewjack/miaodeng/forks" target="_blank" rel="noopener noreferrer" title="GitHub Forks">
+      <span class="oss-label" id="ossForksLabel">Forks</span>
+      <span class="oss-sep"></span>
+      <span class="oss-value" id="ossForksValue">--</span>
     </a>
     <a href="https://github.com/whitewjack/miaodeng/issues" target="_blank" rel="noopener noreferrer" title="GitHub Issues">
-      <img src="https://img.shields.io/github/issues/whitewjack/miaodeng?style=flat-square&logo=github" alt="GitHub Issues">
+      <span class="oss-label" id="ossIssuesLabel">Issues</span>
+      <span class="oss-sep"></span>
+      <span class="oss-value" id="ossIssuesValue">--</span>
     </a>
     <a href="https://github.com/whitewjack/miaodeng/releases" target="_blank" rel="noopener noreferrer" title="GitHub Releases">
-      <img src="https://img.shields.io/github/v/release/whitewjack/miaodeng?style=flat-square&logo=github" alt="GitHub Release">
+      <span class="oss-label" id="ossReleaseLabel">Release</span>
+      <span class="oss-sep"></span>
+      <span class="oss-value" id="ossReleaseValue">--</span>
     </a>
   </div>
   <button id="langToggleBtn" class="header-lang-switch" onclick="toggleLanguageMode()" title="切换语言 / Switch language">🌐 中文</button>
@@ -4138,6 +4167,7 @@ const API_AUDIT = location.origin + '/api/audit-logs';
 const API_BACKUPS = location.origin + '/api/backups';
 const API_LOGIN_RULES = location.origin + '/api/login-rules';
 const API_VERSION_CENTER = location.origin + '/api/version-center';
+const API_OPEN_SOURCE_STATS = location.origin + '/api/open-source-stats';
 const PLUGIN_RUNTIME_INFO_KEY = 'sso_plugin_runtime_info_v1';
 const SYSTEM_FLOW_PREFS_CACHE_KEY = 'sso_system_flow_prefs_cache_v1';
 
@@ -4337,6 +4367,51 @@ function t(key, fallback) {
 
 function tr(zh, en) {
   return languageMode === 'en' ? en : zh;
+}
+
+let openSourceStatsCache = null;
+
+function formatCompactCount(value) {
+  var num = Number(value || 0);
+  if (!isFinite(num) || num < 0) return '--';
+  if (num < 1000) return String(num);
+  if (num < 10000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  return Math.round(num / 1000) + 'k';
+}
+
+function renderOpenSourceStats(stats) {
+  var starsLabel = document.getElementById('ossStarsLabel');
+  var forksLabel = document.getElementById('ossForksLabel');
+  var issuesLabel = document.getElementById('ossIssuesLabel');
+  var releaseLabel = document.getElementById('ossReleaseLabel');
+  var starsValue = document.getElementById('ossStarsValue');
+  var forksValue = document.getElementById('ossForksValue');
+  var issuesValue = document.getElementById('ossIssuesValue');
+  var releaseValue = document.getElementById('ossReleaseValue');
+  if (!starsLabel || !starsValue) return;
+
+  starsLabel.textContent = tr('Stars', 'Stars');
+  forksLabel.textContent = tr('Forks', 'Forks');
+  issuesLabel.textContent = tr('Issues', 'Issues');
+  releaseLabel.textContent = tr('Release', 'Release');
+
+  var repo = (stats && stats.repo) || {};
+  var release = (stats && stats.release) || {};
+  starsValue.textContent = formatCompactCount(repo.stars);
+  forksValue.textContent = formatCompactCount(repo.forks);
+  issuesValue.textContent = formatCompactCount(repo.issues);
+  releaseValue.textContent = release.tag || '--';
+}
+
+async function loadOpenSourceStats() {
+  try {
+    var res = await fetch(API_OPEN_SOURCE_STATS, { cache: 'no-store' });
+    if (!res.ok) throw new Error('open source stats load failed');
+    openSourceStatsCache = await res.json();
+    renderOpenSourceStats(openSourceStatsCache);
+  } catch (e) {
+    renderOpenSourceStats(openSourceStatsCache || null);
+  }
 }
 
 function applyCompactModeLabels() {
@@ -4722,6 +4797,7 @@ function applyLanguageTexts() {
   updateDensityModeButton();
   updateUiThemeButtons();
   applySystemControlsVisibility();
+  renderOpenSourceStats(openSourceStatsCache);
   applyCompactModeLabels();
   initUserBar();
 }
@@ -9873,6 +9949,7 @@ async function boot() {
     languageMode = navLang.startsWith('en') ? 'en' : 'zh';
   }
   applyLanguageTexts();
+  loadOpenSourceStats();
   initVoiceInput();
   const importInput = document.getElementById('importSystemsFile');
   if (importInput) {
