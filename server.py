@@ -1714,6 +1714,39 @@ def _extract_latest_release_from_changelog():
     }
 
 
+def _normalize_version_tuple(value):
+    text = str(value or '').strip().lower()
+    m = re.search(r'v?(\d+(?:\.\d+){0,3})', text)
+    if not m:
+        return ()
+    parts = []
+    for item in m.group(1).split('.'):
+        try:
+            parts.append(int(item))
+        except Exception:
+            parts.append(0)
+    return tuple(parts)
+
+
+def _release_tag_url(releases_url, tag):
+    clean_tag = str(tag or '').strip()
+    if not clean_tag or clean_tag == 'unknown':
+        return releases_url
+    return releases_url.rstrip('/') + '/tag/' + clean_tag
+
+
+def _prefer_release_tag(primary_tag, fallback_tag):
+    primary = str(primary_tag or '').strip()
+    fallback = str(fallback_tag or '').strip()
+    if not primary or primary == 'unknown':
+        return fallback
+    if not fallback or fallback == 'unknown':
+        return primary
+    if _normalize_version_tuple(fallback) > _normalize_version_tuple(primary):
+        return fallback
+    return primary
+
+
 def _fetch_remote_json(url, timeout=6):
     req = urllib.request.Request(url, method='GET')
     req.add_header('User-Agent', 'MiaoDeng-OpenSourceStats/1.0')
@@ -1760,6 +1793,9 @@ def get_open_source_stats_payload():
             return cached
 
     repo_url = 'https://github.com/whitewjack/miaodeng'
+    latest_release = _extract_latest_release_from_changelog()
+    local_release_tag = str(latest_release.get('version') or '').strip()
+    releases_url = repo_url + '/releases'
     payload = {
         'ok': True,
         'source': 'github',
@@ -1773,11 +1809,11 @@ def get_open_source_stats_payload():
             'stars_url': repo_url + '/stargazers',
             'forks_url': repo_url + '/forks',
             'issues_url': repo_url + '/issues',
-            'releases_url': repo_url + '/releases',
+            'releases_url': releases_url,
         },
         'release': {
-            'tag': '',
-            'url': repo_url + '/releases',
+            'tag': local_release_tag if local_release_tag != 'unknown' else '',
+            'url': _release_tag_url(releases_url, local_release_tag),
         }
     }
     try:
@@ -1798,11 +1834,14 @@ def get_open_source_stats_payload():
             'issues_url': str(repo.get('html_url') or repo_url) + '/issues',
             'releases_url': str(repo.get('html_url') or repo_url) + '/releases',
         })
+        payload['release']['url'] = _release_tag_url(payload['repo']['releases_url'], payload['release'].get('tag'))
         if isinstance(release, dict):
-            payload['release'].update({
-                'tag': str(release.get('tag_name') or ''),
-                'url': str(release.get('html_url') or payload['repo']['releases_url']),
-            })
+            release_tag = str(release.get('tag_name') or '').strip()
+            if release_tag:
+                payload['release'].update({
+                    'tag': release_tag,
+                    'url': str(release.get('html_url') or _release_tag_url(payload['repo']['releases_url'], release_tag)),
+                })
     except Exception as e:
         payload['ok'] = False
         payload['error'] = str(e)[:160]
@@ -1821,10 +1860,11 @@ def get_open_source_stats_payload():
                 'issues': _extract_html_count(issue_title, r'issues:\s*([0-9][0-9,]*)'),
             })
             release_tag = _extract_html_text(release_title, r'release:\s*([^\s]+)')
-            if release_tag:
+            preferred_release_tag = _prefer_release_tag(local_release_tag, release_tag)
+            if preferred_release_tag:
                 payload['release'].update({
-                    'tag': release_tag,
-                    'url': payload['repo']['releases_url'] + '/tag/' + release_tag,
+                    'tag': preferred_release_tag,
+                    'url': _release_tag_url(payload['repo']['releases_url'], preferred_release_tag),
                 })
                 payload['ok'] = True
                 payload.pop('error', None)
@@ -1837,17 +1877,18 @@ def get_open_source_stats_payload():
                     'issues': _extract_html_count(repo_html, r'href="/whitewjack/miaodeng/issues"[^>]*>.*?<span[^>]*class="Counter">([0-9][0-9,]*)</span>'),
                 })
                 release_tag = _extract_html_text(repo_html, r'href="/whitewjack/miaodeng/releases/tag/([^"]+)"')
-                if release_tag:
+                preferred_release_tag = _prefer_release_tag(local_release_tag, release_tag)
+                if preferred_release_tag:
                     payload['release'].update({
-                        'tag': release_tag,
-                        'url': payload['repo']['releases_url'] + '/tag/' + release_tag,
+                        'tag': preferred_release_tag,
+                        'url': _release_tag_url(payload['repo']['releases_url'], preferred_release_tag),
                     })
             except Exception:
-                latest_release = _extract_latest_release_from_changelog()
-                payload['release'].update({
-                    'tag': str(latest_release.get('version') or ''),
-                    'url': payload['repo']['releases_url'],
-                })
+                if local_release_tag and local_release_tag != 'unknown':
+                    payload['release'].update({
+                        'tag': local_release_tag,
+                        'url': _release_tag_url(payload['repo']['releases_url'], local_release_tag),
+                    })
 
     with OPEN_SOURCE_STATS_LOCK:
         OPEN_SOURCE_STATS_CACHE['payload'] = payload

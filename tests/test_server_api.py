@@ -28,6 +28,10 @@ class ServerApiTest(unittest.TestCase):
         cls.tmp = tempfile.TemporaryDirectory()
         root = Path(cls.tmp.name)
         (root / "sso-portal.html").write_text("<!doctype html><html><body>ok</body></html>", encoding="utf-8")
+        (root / "CHANGELOG.md").write_text(
+            "# 秒登 MiaoDeng 更新日志\n\n## 2026-03-15 · v3.64\n",
+            encoding="utf-8",
+        )
         data_dir = root / "data"
         data_dir.mkdir(parents=True, exist_ok=True)
 
@@ -424,6 +428,64 @@ class ServerApiTest(unittest.TestCase):
         self.assertIn("uptime_seconds", payload.get("server", {}))
         self.assertIn("version", payload.get("portal", {}))
         self.assertIn("latest_version", payload.get("plugin", {}))
+
+    def test_open_source_stats_prefers_local_release_when_github_api_fails(self):
+        self.srv.OPEN_SOURCE_STATS_CACHE.clear()
+        original_fetch_json = self.srv._fetch_remote_json
+        original_fetch_text = self.srv._fetch_remote_text
+
+        def fake_fetch_json(url, timeout=6):
+            raise urllib.error.HTTPError(url, 403, "rate limit exceeded", hdrs=None, fp=None)
+
+        def fake_fetch_text(url, timeout=8):
+            if "github/stars" in url:
+                return "<svg><text>stars</text><text>1</text></svg>"
+            if "github/forks" in url:
+                return "<svg><text>forks</text><text>0</text></svg>"
+            if "github/issues" in url:
+                return "<svg><title>issues: 0</title></svg>"
+            if "github/v/release" in url:
+                return "<svg><title>release: v3.55</title></svg>"
+            raise AssertionError(f"unexpected url: {url}")
+
+        self.srv._fetch_remote_json = fake_fetch_json
+        self.srv._fetch_remote_text = fake_fetch_text
+        try:
+            payload = self.srv.get_open_source_stats_payload()
+        finally:
+            self.srv._fetch_remote_json = original_fetch_json
+            self.srv._fetch_remote_text = original_fetch_text
+            self.srv.OPEN_SOURCE_STATS_CACHE.clear()
+
+        self.assertTrue(payload.get("ok"))
+        self.assertEqual(payload.get("release", {}).get("tag"), "v3.64")
+        self.assertTrue(payload.get("release", {}).get("url", "").endswith("/tag/v3.64"))
+
+    def test_open_source_stats_uses_local_release_when_latest_release_api_unavailable(self):
+        self.srv.OPEN_SOURCE_STATS_CACHE.clear()
+        original_fetch_json = self.srv._fetch_remote_json
+
+        def fake_fetch_json(url, timeout=6):
+            if url.endswith("/repos/whitewjack/miaodeng"):
+                return {
+                    "full_name": "whitewjack/miaodeng",
+                    "html_url": "https://github.com/whitewjack/miaodeng",
+                    "stargazers_count": 1,
+                    "forks_count": 0,
+                    "open_issues_count": 0,
+                }
+            raise urllib.error.HTTPError(url, 403, "rate limit exceeded", hdrs=None, fp=None)
+
+        self.srv._fetch_remote_json = fake_fetch_json
+        try:
+            payload = self.srv.get_open_source_stats_payload()
+        finally:
+            self.srv._fetch_remote_json = original_fetch_json
+            self.srv.OPEN_SOURCE_STATS_CACHE.clear()
+
+        self.assertTrue(payload.get("ok"))
+        self.assertEqual(payload.get("release", {}).get("tag"), "v3.64")
+        self.assertTrue(payload.get("release", {}).get("url", "").endswith("/tag/v3.64"))
 
     def test_login_rules_center_requires_auth_and_persists(self):
         user = f"u_{int(time.time())}_rules"
