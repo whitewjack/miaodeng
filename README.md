@@ -2,6 +2,8 @@
 
 [English README](./README.en.md) · 中文
 
+📚 文档导航：[`docs/README.md`](./docs/README.md)
+
 ![License](https://img.shields.io/github/license/whitewjack/miaodeng)
 ![Release](https://img.shields.io/github/v/release/whitewjack/miaodeng)
 ![CI](https://img.shields.io/github/actions/workflow/status/whitewjack/miaodeng/ci.yml?branch=main)
@@ -100,7 +102,7 @@ docker compose logs -f sso-portal
 
 - 门户：`http://localhost:6680`
 - 数据目录：`./data`
-- 当前内置镜像元数据版本：`3.65`
+- 当前内置镜像元数据版本：`3.66`
 
 如需启用内置 HTTPS 网关：
 
@@ -213,7 +215,7 @@ docker compose config
 ├── chrome-extension/        # Chrome 插件源码
 ├── data/                    # 运行时数据（不提交）
 ├── deploy/                  # 部署相关配置
-├── docs/                    # 项目文档与素材说明
+├── docs/                    # 项目文档导航与补充说明
 ├── tests/                   # 自动化测试
 ├── server.py                # Python 服务端
 ├── sso-portal.html          # 门户前端主页面

@@ -2,6 +2,8 @@
 
 [中文 README](./README.md)
 
+📚 Docs hub: [`docs/README.md`](./docs/README.md)
+
 Self-hosted portal and Chrome extension for internal system auto-login.
 
 > Deployment note: the project is currently **frontend + backend in one service**. `server.py` serves both the portal page (`/sso-portal.html`) and backend APIs (`/api/*`), so Docker and local Python startup both bring up the full application together.
