@@ -2697,20 +2697,15 @@
       <span class="oss-sep"></span>
       <span class="oss-value" id="ossStarsValue">--</span>
     </a>
-    <a href="https://github.com/whitewjack/miaodeng/forks" target="_blank" rel="noopener noreferrer" title="GitHub Forks">
-      <span class="oss-label" id="ossForksLabel">Forks</span>
-      <span class="oss-sep"></span>
-      <span class="oss-value" id="ossForksValue">--</span>
-    </a>
-    <a href="https://github.com/whitewjack/miaodeng/issues" target="_blank" rel="noopener noreferrer" title="GitHub Issues">
-      <span class="oss-label" id="ossIssuesLabel">Issues</span>
-      <span class="oss-sep"></span>
-      <span class="oss-value" id="ossIssuesValue">--</span>
-    </a>
     <a href="https://github.com/whitewjack/miaodeng/releases" target="_blank" rel="noopener noreferrer" title="GitHub Releases">
       <span class="oss-label" id="ossReleaseLabel">Release</span>
       <span class="oss-sep"></span>
       <span class="oss-value" id="ossReleaseValue">--</span>
+    </a>
+    <a href="https://github.com/whitewjack/miaodeng/blob/main/README.md" target="_blank" rel="noopener noreferrer" title="Project Docs">
+      <span class="oss-label" id="ossDocsLabel">Docs</span>
+      <span class="oss-sep"></span>
+      <span class="oss-value" id="ossDocsValue">Guide</span>
     </a>
   </div>
   <button id="langToggleBtn" class="header-lang-switch" onclick="toggleLanguageMode()" title="切换语言 / Switch language">🌐 中文</button>
@@ -4381,25 +4376,21 @@ function formatCompactCount(value) {
 
 function renderOpenSourceStats(stats) {
   var starsLabel = document.getElementById('ossStarsLabel');
-  var forksLabel = document.getElementById('ossForksLabel');
-  var issuesLabel = document.getElementById('ossIssuesLabel');
   var releaseLabel = document.getElementById('ossReleaseLabel');
+  var docsLabel = document.getElementById('ossDocsLabel');
+  var docsValue = document.getElementById('ossDocsValue');
   var starsValue = document.getElementById('ossStarsValue');
-  var forksValue = document.getElementById('ossForksValue');
-  var issuesValue = document.getElementById('ossIssuesValue');
   var releaseValue = document.getElementById('ossReleaseValue');
   if (!starsLabel || !starsValue) return;
 
   starsLabel.textContent = tr('Stars', 'Stars');
-  forksLabel.textContent = tr('Forks', 'Forks');
-  issuesLabel.textContent = tr('Issues', 'Issues');
   releaseLabel.textContent = tr('Release', 'Release');
+  if (docsLabel) docsLabel.textContent = 'Docs';
+  if (docsValue) docsValue.textContent = tr('文档', 'Guide');
 
   var repo = (stats && stats.repo) || {};
   var release = (stats && stats.release) || {};
   starsValue.textContent = formatCompactCount(repo.stars);
-  forksValue.textContent = formatCompactCount(repo.forks);
-  issuesValue.textContent = formatCompactCount(repo.issues);
   releaseValue.textContent = release.tag || '--';
 }
 
