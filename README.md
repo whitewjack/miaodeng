@@ -12,6 +12,61 @@
 
 > 部署说明：本项目当前为**前后端一体部署**。`server.py` 会同时提供门户前端页面（`/sso-portal.html`）和后端 API（`/api/*`），所以无论是 Docker 还是本地 Python 启动，默认都会把前端和后端一起启动。
 
+## 部署前准备
+
+你可以在下面两种方式中任选一种：
+
+- **Docker 部署**：适合希望一条命令直接跑起来的场景
+- **本地 Python 部署**：适合没装 Docker、或想直接在本机跑服务的场景
+
+### 方式一需要的环境：Docker
+
+请先确保你的电脑已经安装：
+
+- `docker`
+- `docker compose`
+
+可用下面命令自检：
+
+```bash
+docker --version
+docker compose version
+```
+
+如果没有安装：
+
+- **macOS / Windows**：安装 Docker Desktop
+- **Linux**：安装 Docker Engine + Docker Compose Plugin
+
+### 方式二需要的环境：Python
+
+本项目服务端当前**没有额外的 pip 依赖**，只需要安装 **Python 3.11 或更高版本** 即可。
+
+可用下面命令自检：
+
+```bash
+python3 --version
+```
+
+如果没有安装：
+
+- **macOS**
+  - 已安装 Homebrew：`brew install python@3.11`
+  - 或直接安装 Python 官方安装包
+- **Ubuntu / Debian**
+  - `sudo apt-get update`
+  - `sudo apt-get install -y python3`
+- **CentOS / Rocky / RHEL**
+  - `sudo dnf install -y python3`
+- **Windows**
+  - 安装 Python 官方安装包，并勾选 **Add Python to PATH**
+
+安装完成后再次执行：
+
+```bash
+python3 --version
+```
+
 ## 项目组成
 
 - **门户端**：系统卡片、凭据管理、规则中心、更新中心、审计与备份能力
@@ -45,7 +100,7 @@ docker compose logs -f sso-portal
 
 - 门户：`http://localhost:6680`
 - 数据目录：`./data`
-- 当前内置镜像元数据版本：`3.63`
+- 当前内置镜像元数据版本：`3.64`
 
 如需启用内置 HTTPS 网关：
 
@@ -65,6 +120,8 @@ docker compose --profile secure up -d
 ```bash
 python3 server.py
 ```
+
+如果提示找不到 `python3`，说明当前机器还没有安装 Python，先按上面的“部署前准备”完成安装。
 
 启动后同样会同时提供：
 

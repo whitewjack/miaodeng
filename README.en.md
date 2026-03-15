@@ -6,6 +6,55 @@ Self-hosted portal and Chrome extension for internal system auto-login.
 
 > Deployment note: the project is currently **frontend + backend in one service**. `server.py` serves both the portal page (`/sso-portal.html`) and backend APIs (`/api/*`), so Docker and local Python startup both bring up the full application together.
 
+## Prerequisites
+
+You can choose either of these two deployment methods:
+
+- **Docker deployment**: best if you want the fastest all-in-one startup
+- **Local Python deployment**: best if Docker is not installed on the machine
+
+### Option 1 prerequisites: Docker
+
+Make sure the machine already has:
+
+- `docker`
+- `docker compose`
+
+Quick check:
+
+```bash
+docker --version
+docker compose version
+```
+
+If not installed:
+
+- **macOS / Windows**: install Docker Desktop
+- **Linux**: install Docker Engine + Docker Compose Plugin
+
+### Option 2 prerequisites: Python
+
+The backend currently has **no extra pip dependencies**. You only need **Python 3.11+**.
+
+Quick check:
+
+```bash
+python3 --version
+```
+
+If not installed:
+
+- **macOS**
+  - with Homebrew: `brew install python@3.11`
+  - or install Python from the official installer
+- **Ubuntu / Debian**
+  - `sudo apt-get update`
+  - `sudo apt-get install -y python3`
+- **CentOS / Rocky / RHEL**
+  - `sudo dnf install -y python3`
+- **Windows**
+  - install Python and enable **Add Python to PATH**
+
 ## What it does
 
 - Centralized portal for internal systems
@@ -36,6 +85,8 @@ Default URL:
 ```bash
 python3 server.py
 ```
+
+If `python3` is not found, install Python first using the prerequisite guide above.
 
 This starts all of the following together:
 

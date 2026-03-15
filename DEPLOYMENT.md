@@ -13,6 +13,59 @@ That means:
 - local `python3 server.py` also starts **frontend + backend together**
 - if you use Nginx, you usually only need to reverse-proxy **one upstream port: `6680`**
 
+## Prerequisites
+
+Choose one runtime path before deployment:
+
+- **Docker path**
+- **Local Python path**
+
+### Docker path prerequisites
+
+Required:
+
+- Docker
+- Docker Compose
+
+Quick verification:
+
+```bash
+docker --version
+docker compose version
+```
+
+If the machine does not have Docker yet:
+
+- **macOS / Windows**: install Docker Desktop
+- **Linux**: install Docker Engine + Docker Compose Plugin
+
+### Local Python path prerequisites
+
+Required:
+
+- Python `3.11+`
+
+Quick verification:
+
+```bash
+python3 --version
+```
+
+Current backend runtime uses the Python standard library only, so there is **no separate `pip install -r requirements.txt` step** at the moment.
+
+If Python is missing:
+
+- **macOS**
+  - `brew install python@3.11`
+  - or install Python from the official installer
+- **Ubuntu / Debian**
+  - `sudo apt-get update`
+  - `sudo apt-get install -y python3`
+- **CentOS / Rocky / RHEL**
+  - `sudo dnf install -y python3`
+- **Windows**
+  - install Python and enable **Add Python to PATH**
+
 ## Recommended deployment: Docker
 
 ### 1. Prepare environment
@@ -103,6 +156,8 @@ export DEFAULT_USER_PASSWORD='default-user-password'
 export ENCRYPT_KEY='your-encrypt-key'
 python3 server.py
 ```
+
+If `python3` is not available, install Python first using the prerequisite section above.
 
 Default URL:
 

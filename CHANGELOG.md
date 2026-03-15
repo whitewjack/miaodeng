@@ -1,5 +1,16 @@
 # 秒登 MiaoDeng 更新日志
 
+## 2026-03-15 · v3.64
+
+### 📘 模块26：部署前置环境文档补齐
+- [新增] README 中新增“部署前准备”说明，明确 Docker 与本地 Python 两种部署方式分别需要的环境。
+- [新增] README / README.en / `DEPLOYMENT.md` 补充“如果电脑没装 Docker / Python 该如何安装”的说明，降低首次部署门槛。
+- [优化] 明确本地 Python 运行当前无需额外 `pip install`，只要安装 Python 3.11+ 即可启动。
+- [优化] Docker / 插件 / 安装文档版本同步提升到 `3.64`。
+
+### 🧪 验证
+- [文档] 本模块完成后继续执行门户脚本语法检查（`node --check /tmp/sso_portal_inline.js`）、插件脚本语法检查（`node --check chrome-extension/content.js` / `popup.js` / `background.js`）、Python 单元测试（`python3 -m unittest tests.test_server_api tests.test_frontend_regressions -q`）、Node 测试（`node --test tests/test_autosubmit_utils.mjs`）、Docker 配置校验（`docker compose config`）以及版本中心验证（`/api/version-center`）。
+
 ## 2026-03-15 · v3.63
 
 ### ✂️ 模块25：首页 GitHub 入口继续精简
