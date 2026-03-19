@@ -515,6 +515,7 @@ class ServerApiTest(unittest.TestCase):
                     "password_selector": "input[type='password']",
                     "submit_selector": "button[type='submit']",
                     "submit_text": "登录,Login",
+                    "submit_delay_ms": 900,
                     "notes": "用于开源模板测试",
                 }
             ]
@@ -525,11 +526,13 @@ class ServerApiTest(unittest.TestCase):
         self.assertEqual(len(saved.get("items", [])), 1)
         self.assertEqual(saved["items"][0]["flow_type"], "basic")
         self.assertEqual(saved["items"][0]["domains"], ["demo.example.com"])
+        self.assertEqual(saved["items"][0]["submit_delay_ms"], 900)
 
         status, loaded = self.api(f"/api/login-rules?user={user}", headers=headers)
         self.assertEqual(status, 200)
         self.assertTrue(loaded.get("ok"))
         self.assertEqual(loaded.get("items", [])[0].get("submit_selector"), "button[type='submit']")
+        self.assertEqual(loaded.get("items", [])[0].get("submit_delay_ms"), 900)
 
 
 if __name__ == "__main__":

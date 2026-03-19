@@ -3404,6 +3404,11 @@
             </select>
           </div>
           <div>
+            <label for="lr_submit_delay_ms">提交前等待（毫秒）</label>
+            <input id="lr_submit_delay_ms" type="number" min="0" max="5000" step="50" value="0" placeholder="例如：700">
+            <div class="login-rule-help">Token 登录页面若提交过快，可设置 500~1200ms。K8s 模板默认 700ms。</div>
+          </div>
+          <div>
             <label for="lr_otp_submit_strategy">OTP 提交流程</label>
             <select id="lr_otp_submit_strategy">
               <option value="auto">自动（优先点击，兜底回车）</option>
@@ -7885,6 +7890,7 @@ function normalizeLoginRuleClient(raw) {
   item.submit_strategy = ['auto', 'click', 'enter', 'manual'].includes(String(item.submit_strategy || 'auto'))
     ? String(item.submit_strategy || 'auto')
     : 'auto';
+  item.submit_delay_ms = Math.max(0, Math.min(5000, parseInt(item.submit_delay_ms ?? (item.flow_type === 'k8s' ? 700 : 0), 10) || 0));
   item.otp_submit_strategy = ['auto', 'click', 'enter', 'manual'].includes(String(item.otp_submit_strategy || 'auto'))
     ? String(item.otp_submit_strategy || 'auto')
     : 'auto';
@@ -8246,6 +8252,7 @@ function getBuiltInRuleTemplates() {
       ].join('\n'),
       submit_text: 'Sign in,Sign In,登录,Login,Submit',
       submit_strategy: 'auto',
+      submit_delay_ms: 700,
       notes: tr('来源：当前插件内置 Kubernetes Dashboard Token 登录兼容逻辑模板。', 'Source: current plugin built-in Kubernetes Dashboard token login compatibility template.')
     }),
     normalizeLoginRuleClient({
@@ -8507,6 +8514,7 @@ function collectLoginRuleForm() {
     submit_selector: document.getElementById('lr_submit_selector')?.value || '',
     submit_text: document.getElementById('lr_submit_text')?.value || '',
     submit_strategy: document.getElementById('lr_submit_strategy')?.value || 'auto',
+    submit_delay_ms: document.getElementById('lr_submit_delay_ms')?.value || '0',
     otp_dialog_selector: document.getElementById('lr_otp_dialog_selector')?.value || '',
     otp_submit_selector: document.getElementById('lr_otp_submit_selector')?.value || '',
     otp_submit_text: document.getElementById('lr_otp_submit_text')?.value || '',
@@ -8534,6 +8542,7 @@ function resetLoginRuleForm() {
     lr_submit_selector: '',
     lr_submit_text: '',
     lr_submit_strategy: defaults.submit_strategy,
+    lr_submit_delay_ms: defaults.submit_delay_ms,
     lr_otp_dialog_selector: '',
     lr_otp_submit_selector: '',
     lr_otp_submit_text: '',
@@ -8569,6 +8578,7 @@ function populateLoginRuleForm(rule) {
     lr_submit_selector: item.submit_selector,
     lr_submit_text: item.submit_text,
     lr_submit_strategy: item.submit_strategy,
+    lr_submit_delay_ms: item.submit_delay_ms,
     lr_otp_dialog_selector: item.otp_dialog_selector,
     lr_otp_submit_selector: item.otp_submit_selector,
     lr_otp_submit_text: item.otp_submit_text,

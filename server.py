@@ -1190,6 +1190,11 @@ def normalize_login_rule(rule):
     except Exception:
         priority = 50
     priority = max(0, min(1000, priority))
+    try:
+        submit_delay_ms = int(item.get('submit_delay_ms', 700 if flow_type == 'k8s' else 0))
+    except Exception:
+        submit_delay_ms = 700 if flow_type == 'k8s' else 0
+    submit_delay_ms = max(0, min(5000, submit_delay_ms))
     return {
         'id': _normalize_login_rule_id(item.get('id')),
         'name': str(item.get('name') or '').strip() or '未命名规则',
@@ -1206,6 +1211,7 @@ def normalize_login_rule(rule):
         'submit_selector': str(item.get('submit_selector') or '').strip(),
         'submit_text': str(item.get('submit_text') or '').strip(),
         'submit_strategy': submit_strategy,
+        'submit_delay_ms': submit_delay_ms,
         'otp_dialog_selector': str(item.get('otp_dialog_selector') or '').strip(),
         'otp_submit_selector': str(item.get('otp_submit_selector') or '').strip(),
         'otp_submit_text': str(item.get('otp_submit_text') or '').strip(),

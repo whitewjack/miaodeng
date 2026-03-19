@@ -1,5 +1,16 @@
 # 秒登 MiaoDeng 更新日志
 
+## 2026-03-19 · v3.67
+
+### 🔐 模块29：Token 登录提交节奏增强
+- [修复] Chrome 插件的 K8s / Token 登录流程新增更稳的提交等待，避免部分页面在 token 刚填充完成时过早触发提交。
+- [新增] 登录规则中心支持配置“提交前等待（毫秒）”，可针对特定系统单独调节自动提交节奏。
+- [优化] 服务端登录规则归一化支持持久化 `submit_delay_ms`，旧规则升级后也能获得更稳的 Token 提交默认值。
+- [优化] Docker / 插件 / 安装文档版本同步提升到 `3.67`。
+
+### 🧪 验证
+- [通过] 已执行 `node --check chrome-extension/content.js`、`python3 -m py_compile server.py`、`node tests/test_autosubmit_utils.mjs`、`python3 tests/test_frontend_regressions.py`、`python3 tests/test_server_api.py`。
+
 ## 2026-03-15 · v3.66
 
 ### 📚 模块28：开源文档中心与 GitHub About 跳转优化

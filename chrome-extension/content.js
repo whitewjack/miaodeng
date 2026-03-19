@@ -417,6 +417,7 @@
         submit_selector: buildElementSelectorCandidates(submitEl).join('\n'),
         submit_text: dedupeStringList(submitTexts).slice(0, 4).join(','),
         submit_strategy: 'auto',
+        submit_delay_ms: flowType === 'k8s' ? 700 : 0,
         otp_dialog_selector: buildElementSelectorCandidates(otpDialogEl).join('\n'),
         otp_submit_selector: buildElementSelectorCandidates(otpSubmitEl).join('\n'),
         otp_submit_text: dedupeStringList(otpSubmitTexts).slice(0, 4).join(','),
@@ -1040,6 +1041,9 @@
     if (['auto', 'click', 'enter', 'manual'].indexOf(submitStrategy) < 0) submitStrategy = 'auto';
     var otpSubmitStrategy = String(item.otp_submit_strategy || 'auto').trim().toLowerCase();
     if (['auto', 'click', 'enter', 'manual'].indexOf(otpSubmitStrategy) < 0) otpSubmitStrategy = 'auto';
+    var submitDelayMs = parseInt(item.submit_delay_ms, 10);
+    if (!isFinite(submitDelayMs)) submitDelayMs = flowType === 'k8s' ? 700 : 0;
+    submitDelayMs = Math.max(0, Math.min(5000, submitDelayMs));
     var priority = parseInt(item.priority || '0', 10);
     if (!isFinite(priority)) priority = 0;
     return {
@@ -1058,6 +1062,7 @@
       submit_selector: String(item.submit_selector || '').trim(),
       submit_text: String(item.submit_text || '').trim(),
       submit_strategy: submitStrategy,
+      submit_delay_ms: submitDelayMs,
       otp_dialog_selector: String(item.otp_dialog_selector || '').trim(),
       otp_submit_selector: String(item.otp_submit_selector || '').trim(),
       otp_submit_text: String(item.otp_submit_text || '').trim(),
@@ -1245,6 +1250,9 @@
     await new Promise(function(resolve) { setTimeout(resolve, 120); });
     typeValue(passwordInput, config.password || '');
     await new Promise(function(resolve) { setTimeout(resolve, 180); });
+    if (rule.submit_delay_ms > 0) {
+      await new Promise(function(resolve) { setTimeout(resolve, rule.submit_delay_ms); });
+    }
 
     if (rule.submit_strategy !== 'manual') {
       var submitted = false;
@@ -1325,6 +1333,9 @@
     }
     typeValue(tokenInput, token || '');
     await new Promise(function(resolve) { setTimeout(resolve, 180); });
+    if (rule.submit_delay_ms > 0) {
+      await new Promise(function(resolve) { setTimeout(resolve, rule.submit_delay_ms); });
+    }
 
     if (rule.submit_strategy !== 'manual') {
       var submitted = false;
@@ -1947,6 +1958,7 @@
   // ==================== 登录类型：K8s（Token）====================
   function k8sLogin(token) {
     console.log('[AutoLogin] [K8s] Token login');
+    var k8sSubmitDelayMs = 700;
     var attempt = 0;
 
     function tryK8sLogin() {
@@ -1991,6 +2003,10 @@
 
       setTimeout(function() {
         tokenInput.focus();
+        if ((tokenInput.value || '') !== (token || '')) {
+          typeValue(tokenInput, token || '');
+          console.log('[AutoLogin] token corrected before submit');
+        }
         console.log('[AutoLogin] token length: ' + tokenInput.value.length);
 
         setTimeout(function() {
@@ -2003,7 +2019,7 @@
             clickBtnByText('Sign in', 'Sign In', 'SIGN IN', '\u767B\u5F55', 'Login', 'Submit');
             console.log('[AutoLogin] K8s login done!');
           }, 500);
-        }, 300);
+        }, k8sSubmitDelayMs);
       }, 100);
     }
 

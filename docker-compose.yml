@@ -3,13 +3,13 @@ services:
     build:
       context: .
       args:
-        APP_VERSION: "3.66"
+        APP_VERSION: "3.67"
     container_name: sso-portal
     restart: unless-stopped
     ports:
       - "6680:6680"
     environment:
-      APP_VERSION: "3.66"
+      APP_VERSION: "3.67"
       PORT: 6680
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       DEFAULT_USER_PASSWORD: ${DEFAULT_USER_PASSWORD:-}

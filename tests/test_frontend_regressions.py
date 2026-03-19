@@ -42,6 +42,11 @@ class FrontendRegressionTest(unittest.TestCase):
         self.assertIn("body.enterprise-density .card-actions {\n    top: 6px;\n    gap: 3px;\n  }", PORTAL_HTML)
         self.assertIn("body.enterprise-density .card-favorite-btn {\n    top: 6px;\n    right: 6px;\n    width: 23px;\n    height: 23px;", PORTAL_HTML)
 
+    def test_login_rule_center_exposes_submit_delay_for_token_pages(self):
+        self.assertIn('label for="lr_submit_delay_ms">提交前等待（毫秒）</label>', PORTAL_HTML)
+        self.assertIn("K8s 模板默认 700ms", PORTAL_HTML)
+        self.assertIn("submit_delay_ms: 700", PORTAL_HTML)
+
 
 if __name__ == "__main__":
     unittest.main()
