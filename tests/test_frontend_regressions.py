@@ -15,10 +15,6 @@ class FrontendRegressionTest(unittest.TestCase):
             "onclick=\"invokeHubAction(event, \\'audit\\')\"",
             "onclick=\"invokeHubAction(event, \\'backup\\')\"",
             "onclick=\"invokeHubAction(event, \\'update-center\\')\"",
-            "onclick=\"invokeHubAction(event, \\'guide\\')\"",
-            "onclick=\"invokeHubAction(event, \\'supported\\')\"",
-            "onclick=\"invokeHubAction(event, \\'changelog\\')\"",
-            "onclick=\"invokeHubAction(event, \\'message\\')\"",
         ]
         for launcher in expected_launchers:
             with self.subTest(launcher=launcher):
@@ -34,13 +30,20 @@ class FrontendRegressionTest(unittest.TestCase):
             with self.subTest(entry=entry):
                 self.assertIn(entry, PORTAL_HTML)
 
+    def test_support_hub_is_collapsed_and_floating_entries_remain(self):
+        self.assertIn("function renderSupportHub() {", PORTAL_HTML)
+        self.assertIn("box.hidden = true;", PORTAL_HTML)
+        self.assertIn("box.innerHTML = '';", PORTAL_HTML)
+        self.assertIn("onclick=\"toggleSupportedPopup()\"", PORTAL_HTML)
+        self.assertIn("onclick=\"toggleMsgPopup()\"", PORTAL_HTML)
+
     def test_card_action_spacing_prevents_favorite_delete_overlap(self):
-        self.assertIn(".card {\n    --card-top-actions-offset: 44px;\n  }", PORTAL_HTML)
-        self.assertIn(".card-actions {\n    position: absolute; top: 8px; right: var(--card-top-actions-offset); display: none; gap: 4px;\n  }", PORTAL_HTML)
+        self.assertIn(".card-ops-row {", PORTAL_HTML)
+        self.assertIn(".card-ops-row .card-actions {\n    display: inline-flex;\n    position: static;\n  }", PORTAL_HTML)
+        self.assertIn(".card-ops-row .card-favorite-btn,\n  .card-ops-row .card-actions button {\n    position: static;\n    flex: 0 0 auto;\n  }", PORTAL_HTML)
         self.assertIn(".card-favorite-btn { z-index: 3; }", PORTAL_HTML)
-        self.assertIn("body.enterprise-density .card {\n    --card-top-actions-offset: 38px;\n  }", PORTAL_HTML)
-        self.assertIn("body.enterprise-density .card-actions {\n    top: 6px;\n    gap: 3px;\n  }", PORTAL_HTML)
-        self.assertIn("body.enterprise-density .card-favorite-btn {\n    top: 6px;\n    right: 6px;\n    width: 23px;\n    height: 23px;", PORTAL_HTML)
+        self.assertIn("body.enterprise-density .card-actions { gap: 3px; }", PORTAL_HTML)
+        self.assertIn("body.enterprise-density .card-favorite-btn {\n    width: 23px;\n    height: 23px;", PORTAL_HTML)
 
     def test_login_rule_center_exposes_submit_delay_for_token_pages(self):
         self.assertIn('label for="lr_submit_delay_ms">提交前等待（毫秒）</label>', PORTAL_HTML)

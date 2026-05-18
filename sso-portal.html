@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%23667eea'/><stop offset='100%25' style='stop-color:%23764ba2'/></linearGradient></defs><circle cx='50' cy='50' r='45' fill='url(%23g)'/><path d='M50 20 L50 55 M35 40 L50 55 L65 40' stroke='white' stroke-width='6' stroke-linecap='round' stroke-linejoin='round' fill='none'/><circle cx='50' cy='72' r='5' fill='white'/></svg>">
-<link id="antdUiCss" rel="stylesheet" href="https://unpkg.com/antd@5.24.7/dist/reset.css" disabled>
 <link rel="stylesheet" href="css/extra.css">
 <title>秒登 - 一键自动登录</title>
 <style>
@@ -165,11 +164,8 @@
     padding: 2px 6px; border-radius: 999px; font-size: 10px; font-weight: 600;
     color: #ffb74d; background: rgba(255,183,77,0.12); border: 1px solid rgba(255,183,77,0.24);
   }
-  .card {
-    --card-top-actions-offset: 44px;
-  }
   .card-actions {
-    position: absolute; top: 8px; right: var(--card-top-actions-offset); display: none; gap: 4px;
+    display: none; gap: 4px;
   }
   .card:hover .card-actions,
   .card:focus-within .card-actions { display: flex; }
@@ -314,12 +310,60 @@
     background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
     border-radius: 14px; max-width: 320px;
   }
+  .like-section.prominent {
+    width: min(100%, 1240px);
+    max-width: 1240px;
+    margin: 14px auto 16px;
+    padding: 16px 18px;
+    justify-content: space-between;
+    gap: 16px;
+    border-radius: 18px;
+    background: linear-gradient(90deg, rgba(127,29,29,0.16), rgba(190,24,93,0.1) 38%, rgba(15,23,42,0.72) 100%);
+    border: 1px solid rgba(251,113,133,0.2);
+    box-shadow: 0 18px 44px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .like-copy {
+    min-width: 0;
+    flex: 1;
+  }
+  .like-kicker {
+    font-size: 11px;
+    font-weight: 700;
+    color: #fda4af;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .like-mainline {
+    margin-top: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .like-headline {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff1f2;
+  }
   .like-btn {
     background: none; border: none; cursor: pointer;
     font-size: 28px; transition: transform 0.2s; padding: 4px;
     line-height: 1;
   }
+  .like-section.prominent .like-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(127,29,29,0.92), rgba(225,29,72,0.88));
+    box-shadow: 0 12px 26px rgba(190,24,93,0.28);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex: 0 0 auto;
+  }
   .like-btn:hover { transform: scale(1.2); }
+  .like-section.prominent .like-btn:hover { transform: translateY(-1px) scale(1.04); }
   .like-btn.liked { animation: likePop 0.4s ease; }
   @keyframes likePopClick {
     0% { transform: scale(1); }
@@ -333,9 +377,18 @@
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
   .like-text { color: #8892b0; font-size: 13px; }
+  .like-section.prominent .like-text {
+    color: #fecdd3;
+    font-size: 14px;
+  }
   .like-users {
     font-size: 11px; color: #4a5568; margin-top: 4px;
     max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .like-section.prominent .like-users {
+    max-width: 100%;
+    color: #cbd5e1;
+    font-size: 12px;
   }
 
   /* 未验证状态卡片 */
@@ -383,14 +436,20 @@
   }
   .supported-btn:hover { background: rgba(102,126,234,0.15); border-color: rgba(102,126,234,0.4); color: #667eea; }
   .supported-popup {
-    display: none; position: fixed; bottom: 64px; left: 20px;
+    display: none; position: fixed; top: 50%; left: 50%;
     background: #1a1a3e; border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 14px; padding: 24px; width: 340px;
-    z-index: 100; box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    border-radius: 14px; padding: 24px; width: min(420px, calc(100vw - 24px));
+    z-index: 1200; box-shadow: 0 16px 40px rgba(0,0,0,0.5);
     animation: popupIn 0.2s ease-out;
+    transform: translate(-50%, -50%);
+    max-height: min(76vh, 720px);
+    overflow-y: auto;
   }
   .supported-popup.show { display: block; }
-  @keyframes popupIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes popupInCentered {
+    from { opacity: 0; transform: translate(-50%, calc(-50% + 10px)); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+  }
   .supported-popup h3 { font-size: 15px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
   .supported-popup .domain-list { list-style: none; padding: 0; margin: 0 0 16px; max-height: 320px; overflow-y: auto; }
   .supported-popup .domain-list li {
@@ -413,11 +472,12 @@
 
   /* 使用指南弹窗 */
   .guide-popup {
-    display: none; position: fixed; top: 80px; right: 20px;
+    display: none; position: fixed; top: 50%; left: 50%;
     background: #1a1a3e; border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 14px; padding: 24px; width: 380px;
-    z-index: 100; box-shadow: 0 16px 40px rgba(0,0,0,0.5);
-    animation: popupIn 0.2s ease-out; max-height: 70vh; overflow-y: auto;
+    border-radius: 14px; padding: 24px; width: min(560px, calc(100vw - 24px));
+    z-index: 1200; box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    animation: popupInCentered 0.2s ease-out; max-height: min(76vh, 760px); overflow-y: auto;
+    transform: translate(-50%, -50%);
   }
   .guide-popup.show { display: block; }
   .guide-popup h3 { font-size: 15px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
@@ -438,7 +498,7 @@
   }
 
   /* 更新日志（美化） */
-  #changelogPopup { width: 460px; }
+  #changelogPopup { width: min(560px, calc(100vw - 24px)); }
   .changelog-content {
     font-size: 12px; line-height: 1.8; color: #ccd6f6;
     max-height: 420px; overflow: auto;
@@ -551,7 +611,7 @@
   }
 
   /* 统一更新中心 */
-  #updateCenterPopup { width: 500px; }
+  #updateCenterPopup { width: min(560px, calc(100vw - 24px)); }
   .update-center-status {
     font-size: 12px;
     color: #8ea0d8;
@@ -688,7 +748,7 @@
   }
 
   /* 健康监控面板 */
-  #healthPopup { width: 520px; }
+  #healthPopup { width: min(560px, calc(100vw - 24px)); }
   .health-toolbar {
     display: flex; gap: 8px; align-items: center; margin-bottom: 12px;
   }
@@ -1251,6 +1311,84 @@
     display: grid; gap: 10px;
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+  .systems-meta-bar {
+    max-width: 1100px;
+    margin: 0 auto 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.045);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .systems-meta-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+  .systems-meta-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #eef3ff;
+  }
+  .systems-meta-count {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: rgba(102,126,234,0.16);
+    border: 1px solid rgba(102,126,234,0.28);
+    color: #dfe7ff;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .systems-meta-filters {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+  .systems-meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.09);
+    color: #c9d4f6;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .systems-meta-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .systems-meta-actions button {
+    padding: 7px 10px;
+    border-radius: 9px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+    color: #dbe5ff;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .systems-meta-actions button:hover {
+    background: rgba(102,126,234,0.16);
+    border-color: rgba(102,126,234,0.34);
+  }
   .hub-section {
     max-width: 1100px; margin: 0 auto 16px; padding: 16px 18px;
     border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
@@ -1267,6 +1405,33 @@
   }
   .hub-grid {
     display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px;
+  }
+  .admin-toolstrip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .admin-toolstrip-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .admin-toolstrip-actions button {
+    padding: 7px 10px;
+    border-radius: 9px;
+    border: 1px solid rgba(102,126,234,0.26);
+    background: rgba(102,126,234,0.14);
+    color: #d9e3ff;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .admin-toolstrip-actions button:hover {
+    border-color: rgba(102,126,234,0.42);
+    background: rgba(102,126,234,0.22);
   }
   .hub-card {
     border-radius: 12px; padding: 14px; background: rgba(255,255,255,0.05);
@@ -1406,7 +1571,6 @@
     color: #ffd978;
   }
   .card-favorite-btn {
-    position: absolute; top: 8px; right: 8px;
     width: 26px; height: 26px;
     border: 1px solid rgba(255,255,255,0.14);
     border-radius: 8px;
@@ -1427,6 +1591,13 @@
   }
   .card-actions { z-index: 2; }
   .card-favorite-btn { z-index: 3; }
+  .card-ops-row {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
   .group-empty {
     font-size: 12px; color: #6f83b8;
     padding: 10px 0 2px;
@@ -1589,27 +1760,27 @@
     display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px;
   }
   .focus-title {
-    font-size: 18px; font-weight: 700; color: #fff;
+    font-size: 17px; font-weight: 700; color: #fff;
   }
   .focus-subtitle {
-    margin-top: 6px; color: #a9bae8; font-size: 13px; line-height: 1.7;
+    margin-top: 4px; color: #a9bae8; font-size: 12px; line-height: 1.6;
   }
   .focus-actions {
     display: flex; gap: 8px; flex-wrap: wrap;
   }
   .focus-actions button {
-    padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(132,154,255,0.22);
-    background: rgba(255,255,255,0.08); color: #e7eeff; font-size: 13px; cursor: pointer; font-weight: 600;
+    padding: 7px 11px; border-radius: 9px; border: 1px solid rgba(132,154,255,0.22);
+    background: rgba(255,255,255,0.08); color: #e7eeff; font-size: 12px; cursor: pointer; font-weight: 600;
   }
   .focus-actions button.primary {
     background: linear-gradient(90deg, #667eea, #764ba2); border: none; color: #fff;
   }
   .focus-grid {
-    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;
   }
   .focus-step {
     background: rgba(9,16,38,0.42); border: 1px solid rgba(132,154,255,0.14);
-    border-radius: 14px; padding: 16px;
+    border-radius: 12px; padding: 14px;
   }
   .focus-step-head {
     display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px;
@@ -1630,17 +1801,17 @@
     color: #8ea2da; background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.08);
   }
   .focus-step-title {
-    font-size: 16px; color: #fff; font-weight: 600;
+    font-size: 15px; color: #fff; font-weight: 600;
   }
   .focus-step-desc {
-    margin-top: 8px; color: #a9bae8; font-size: 13px; line-height: 1.7; min-height: 44px;
+    margin-top: 6px; color: #a9bae8; font-size: 12px; line-height: 1.6; min-height: 36px;
   }
   .focus-step-actions {
-    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
   }
   .focus-step-actions button {
-    padding: 7px 11px; border-radius: 9px; border: 1px solid rgba(132,154,255,0.18);
-    background: rgba(255,255,255,0.08); color: #e9efff; cursor: pointer; font-size: 12px; font-weight: 600;
+    padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(132,154,255,0.18);
+    background: rgba(255,255,255,0.08); color: #e9efff; cursor: pointer; font-size: 11px; font-weight: 600;
   }
   .focus-step-actions button.primary {
     background: rgba(102,126,234,0.24); border-color: rgba(102,126,234,0.34); color: #dfe7ff;
@@ -1973,6 +2144,12 @@
     background: var(--antd-surface-soft);
     border-color: var(--antd-border);
     color: var(--antd-text);
+  }
+  body.ui-antd-light .admin-toolstrip-actions button,
+  body.ui-antd-dark .admin-toolstrip-actions button {
+    background: var(--antd-surface-soft);
+    border-color: var(--antd-border);
+    color: var(--antd-primary);
   }
   body.ui-antd-light .hub-card-actions button.secondary,
   body.ui-antd-dark .hub-card-actions button.secondary {
@@ -2535,21 +2712,13 @@
   body.enterprise-density .card-info .cred {
     font-size: 10px;
   }
-  body.enterprise-density .card {
-    --card-top-actions-offset: 38px;
-  }
-  body.enterprise-density .card-actions {
-    top: 6px;
-    gap: 3px;
-  }
+  body.enterprise-density .card-actions { gap: 3px; }
   body.enterprise-density .card-actions button {
     width: 23px;
     height: 23px;
     font-size: 11px;
   }
   body.enterprise-density .card-favorite-btn {
-    top: 6px;
-    right: 6px;
     width: 23px;
     height: 23px;
     font-size: 12px;
@@ -2600,7 +2769,6 @@
     body { padding: 18px 12px 90px; }
     .header { margin-bottom: 20px; }
     .header h1 { font-size: 26px; }
-    .theme-switch { width: 40px; height: 40px; top: 8px; right: 6px; font-size: 18px; }
     .header-lang-switch { top: 8px; right: 52px; height: 40px; min-width: 52px; padding: 0 8px; font-size: 11px; }
     .user-bar {
       padding: 10px 12px;
@@ -2620,6 +2788,13 @@
     .focus-head { flex-direction: column; }
     .focus-grid { grid-template-columns: 1fr; }
     .hub-grid { grid-template-columns: 1fr; }
+    .admin-toolstrip {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .admin-toolstrip-actions {
+      justify-content: flex-start;
+    }
     .system-controls {
       grid-template-columns: 1fr;
       margin-bottom: 10px;
@@ -2639,8 +2814,9 @@
     .msg-popup {
       width: calc(100vw - 24px) !important;
       max-width: calc(100vw - 24px) !important;
-      left: 12px !important;
+      left: 50% !important;
       right: auto !important;
+      transform: translate(-50%, -50%) !important;
     }
     .login-rules-modal {
       width: calc(100vw - 24px);
@@ -2652,8 +2828,16 @@
     .login-rules-list,
     .login-rule-editor { max-height: none; }
     .login-rule-form-grid { grid-template-columns: 1fr; }
-    .guide-popup { top: 70px; max-height: 75vh; }
-    .supported-popup { bottom: 122px; }
+    .guide-popup,
+    .supported-popup,
+    #changelogPopup,
+    #updateCenterPopup,
+    #healthPopup,
+    #auditPopup,
+    #backupPopup {
+      top: 50% !important;
+      max-height: 75vh;
+    }
     .msg-popup { bottom: 164px; max-height: 62vh; }
     .install-banner { right: 12px; bottom: 12px; }
     .msg-btn { right: 12px; bottom: 62px; }
@@ -2678,6 +2862,547 @@
     .backup-toolbar { flex-wrap: wrap; }
     .audit-pager { flex-wrap: wrap; justify-content: center; }
     .announcement-header { align-items: flex-start; }
+  }
+
+  /* Codex UI refresh: operations console skin */
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+  }
+  html { overflow-x: clip !important; }
+  body { min-width: 0; overscroll-behavior-x: none; }
+  body {
+    --console-bg: #090d18;
+    --console-panel: rgba(18, 25, 43, 0.78);
+    --console-panel-strong: rgba(22, 31, 52, 0.92);
+    --console-border: rgba(136, 158, 196, 0.16);
+    --console-border-strong: rgba(120, 183, 255, 0.34);
+    --console-text: #f4f7fb;
+    --console-muted: #94a3b8;
+    --console-soft: #c8d5e8;
+    --console-blue: #38bdf8;
+    --console-cyan: #2dd4bf;
+    --console-green: #34d399;
+    --console-amber: #fbbf24;
+    --console-danger: #fb7185;
+    background:
+      radial-gradient(circle at 18% -10%, rgba(45, 212, 191, 0.18), transparent 30%),
+      radial-gradient(circle at 88% 4%, rgba(56, 189, 248, 0.16), transparent 28%),
+      linear-gradient(180deg, #0d1324 0%, #080c17 48%, #070b14 100%);
+    color: var(--console-text);
+    padding: 28px 18px 44px;
+    position: relative;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+    background-size: 36px 36px;
+    mask-image: linear-gradient(180deg, rgba(0,0,0,0.58), transparent 72%);
+  }
+  .container,
+  .header,
+  .user-bar,
+  .focus-workbench,
+  .search-bar,
+  .system-controls,
+  .stats-overview,
+  .quick-access-section,
+  .announcement-card,
+  .hub-section,
+  .env-section,
+  .systems-meta-bar {
+    width: min(100%, 1240px);
+    max-width: 1240px;
+    min-width: 0;
+  }
+  .header {
+    text-align: left;
+    margin: 0 auto 18px;
+    padding: 26px 28px;
+    border-radius: 24px;
+    border: 1px solid rgba(120, 183, 255, 0.16);
+    background:
+      linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(14, 34, 52, 0.74)),
+      linear-gradient(90deg, rgba(45, 212, 191, 0.08), rgba(56, 189, 248, 0.06));
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+    overflow: hidden;
+    position: relative;
+    z-index: 4;
+  }
+  .header::after {
+    content: "";
+    position: absolute;
+    right: 28px;
+    bottom: -46px;
+    width: 280px;
+    height: 160px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(45, 212, 191, 0.12), rgba(56, 189, 248, 0.08));
+    transform: rotate(-8deg);
+    pointer-events: none;
+  }
+  .header h1 {
+    position: relative;
+    z-index: 1;
+    font-size: 38px;
+    line-height: 1.05;
+    letter-spacing: 0;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #ecfeff, #7dd3fc 52%, #5eead4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .header p {
+    position: relative;
+    z-index: 1;
+    color: #b8c5d9;
+    font-size: 14px;
+  }
+  .header-open-source {
+    position: relative;
+    z-index: 1;
+    justify-content: flex-start;
+    gap: 8px;
+    margin-top: 16px;
+    max-width: calc(100% - 190px);
+  }
+  .header-open-source a {
+    min-height: 34px;
+    border-radius: 10px;
+    border-color: rgba(148, 163, 184, 0.18);
+    background: rgba(15, 23, 42, 0.64);
+    color: #dce9f8;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .header-open-source a:hover {
+    border-color: rgba(45, 212, 191, 0.42);
+    box-shadow: 0 12px 28px rgba(3, 7, 18, 0.22);
+  }
+  .header-open-source .oss-label {
+    color: #8fb0c8;
+  }
+  .header-lang-switch {
+    top: 28px;
+    z-index: 2;
+    background: rgba(15, 23, 42, 0.78);
+    border-color: rgba(148, 163, 184, 0.22);
+    color: #e6f3ff;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.22);
+  }
+  .header-lang-switch {
+    right: 26px;
+  }
+  .header-lang-switch:hover {
+    background: rgba(18, 32, 51, 0.96);
+    border-color: rgba(45, 212, 191, 0.42);
+    transform: translateY(-1px);
+  }
+  .user-bar,
+  .focus-workbench,
+  .search-bar input,
+  .system-controls.show,
+  .stats-overview .stat-card,
+  .quick-access-section,
+  .announcement-card,
+  .hub-section,
+  .env-section,
+  .systems-meta-bar {
+    border: 1px solid var(--console-border);
+    background: var(--console-panel);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255,255,255,0.04);
+    backdrop-filter: blur(16px);
+  }
+  .user-bar {
+    position: relative;
+    z-index: 80;
+  }
+  .search-bar,
+  .system-controls,
+  .stats-overview,
+  .quick-access-section,
+  .announcement-card,
+  .hub-section,
+  .systems-meta-bar,
+  .env-section {
+    position: relative;
+    z-index: 1;
+  }
+  .user-bar {
+    margin-bottom: 14px;
+    padding: 14px 16px;
+    border-radius: 16px;
+  }
+  .user-bar .user-info {
+    min-width: 0;
+  }
+  .user-bar .user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+  }
+  .user-bar .user-avatar.editable {
+    background: linear-gradient(135deg, #2dd4bf, #38bdf8);
+    color: #06202b;
+  }
+  .user-bar .user-name {
+    color: #f8fafc;
+  }
+  .user-bar .user-mode {
+    border-radius: 999px;
+  }
+  .user-mode.mode-edit {
+    background: rgba(52, 211, 153, 0.14);
+    border-color: rgba(52, 211, 153, 0.36);
+    color: #86efac;
+  }
+  .user-bar .user-actions {
+    min-width: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: 100%;
+  }
+  .user-bar .user-actions select,
+  .user-bar .user-actions > button,
+  .tools-menu-btn,
+  .systems-meta-actions button,
+  .admin-toolstrip-actions button,
+  .focus-actions button,
+  .focus-step-actions button,
+  .hub-card-actions button {
+    border-radius: 10px;
+    border-color: rgba(148, 163, 184, 0.18);
+    background: rgba(15, 23, 42, 0.58);
+    color: #d9e7f7;
+  }
+  .user-bar .user-actions select {
+    max-width: 100%;
+    background: rgba(15, 23, 42, 0.82);
+    color: #e5eefb;
+  }
+  #onboardBtn.quick-action-btn {
+    background: rgba(45, 212, 191, 0.16);
+    border-color: rgba(45, 212, 191, 0.34);
+    color: #99f6e4;
+  }
+  #guideBtn.quick-action-btn,
+  .focus-actions button.primary,
+  .focus-step-actions button.primary,
+  .btn-primary {
+    background: linear-gradient(90deg, #0891b2, #14b8a6);
+    border-color: transparent;
+    color: #f0fdfa;
+  }
+  .user-bar .user-actions > button:hover,
+  .tools-menu-btn:hover,
+  .systems-meta-actions button:hover,
+  .admin-toolstrip-actions button:hover,
+  .focus-actions button:hover,
+  .focus-step-actions button:hover {
+    background: rgba(45, 212, 191, 0.14);
+    border-color: rgba(45, 212, 191, 0.38);
+    color: #ccfbf1;
+  }
+  .focus-workbench {
+    margin-bottom: 16px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(13, 27, 46, 0.9), rgba(11, 38, 43, 0.76));
+  }
+  .focus-title,
+  .hub-title {
+    color: #f8fafc;
+  }
+  .focus-subtitle,
+  .hub-subtitle {
+    color: #9eb0c7;
+  }
+  .focus-step,
+  .hub-card,
+  .card {
+    border-color: rgba(148, 163, 184, 0.14);
+    background: rgba(15, 23, 42, 0.66);
+  }
+  .search-bar {
+    margin-bottom: 14px;
+  }
+  .search-bar input {
+    height: 52px;
+    border-radius: 16px;
+    padding-left: 46px;
+    padding-right: 86px;
+    color: #f8fafc;
+    font-size: 15px;
+  }
+  .search-bar input:focus {
+    border-color: rgba(45, 212, 191, 0.52);
+    box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.13), 0 18px 48px rgba(8, 47, 73, 0.22);
+  }
+  .search-bar input::placeholder {
+    color: #64748b;
+  }
+  .search-bar .search-icon,
+  .search-bar .search-clear,
+  .search-bar .search-voice {
+    color: #8fb0c8;
+  }
+  .stats-overview {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .stat-card {
+    min-height: 106px;
+    border-radius: 16px;
+    padding: 15px 16px;
+  }
+  .stat-card::before {
+    height: 3px;
+    background: linear-gradient(90deg, #2dd4bf, #38bdf8);
+  }
+  .stat-card .stat-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+    background: rgba(45, 212, 191, 0.14);
+    color: #99f6e4;
+  }
+  .stat-card .k {
+    color: #9eb0c7;
+    font-weight: 700;
+  }
+  .stat-card .v {
+    margin-top: 4px;
+    font-size: 27px;
+    color: #f8fafc;
+  }
+  .stat-card .sub {
+    color: #7f91aa;
+  }
+  .systems-meta-bar {
+    margin-bottom: 14px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: linear-gradient(90deg, rgba(18, 25, 43, 0.9), rgba(12, 34, 43, 0.72));
+  }
+  .systems-meta-title {
+    font-size: 16px;
+    color: #f8fafc;
+  }
+  .systems-meta-count,
+  .systems-meta-chip {
+    height: 28px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.62);
+    border-color: rgba(148, 163, 184, 0.18);
+    color: #b9c8dc;
+  }
+  .systems-meta-count {
+    color: #99f6e4;
+    border-color: rgba(45, 212, 191, 0.24);
+  }
+  .env-section {
+    margin: 0 auto 18px;
+    padding: 18px;
+    border-radius: 20px;
+    background: rgba(12, 18, 32, 0.62);
+  }
+  .env-title {
+    margin-bottom: 14px;
+    color: #edf6ff;
+    font-size: 15px;
+  }
+  .env-tag {
+    border-radius: 999px;
+    letter-spacing: 0;
+  }
+  .grid,
+  .quick-access-section .quick-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+    gap: 12px;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .card {
+    min-width: 0;
+    max-width: 100%;
+    min-height: 118px;
+    align-items: flex-start;
+    padding: 18px 16px;
+    border-radius: 16px;
+    overflow: clip;
+    box-shadow: none;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(45, 212, 191, 0.95), rgba(56, 189, 248, 0.65));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(45, 212, 191, 0.34);
+    background: rgba(18, 31, 52, 0.82);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+  }
+  .card:hover::before {
+    opacity: 1;
+  }
+  .card-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(45, 212, 191, 0.18), rgba(56, 189, 248, 0.12)) !important;
+    color: #ccfbf1;
+  }
+  .card-info h3 {
+    color: #f8fafc;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+  }
+  .card-info p {
+    color: #8798b0;
+    max-width: 100%;
+  }
+  .card-info .cred {
+    color: #5eead4;
+  }
+  .card-info .card-notes {
+    color: #9fb2c8;
+  }
+  .card-arrow {
+    align-self: center;
+    color: #38bdf8;
+  }
+  .card-ops-row {
+    max-width: 100%;
+    min-width: 0;
+  }
+  .card-ops-row .card-actions {
+    display: inline-flex;
+    position: static;
+  }
+  .card-ops-row .card-favorite-btn,
+  .card-ops-row .card-actions button {
+    position: static;
+    flex: 0 0 auto;
+  }
+  .card-favorite-btn,
+  .card-actions button {
+    background: rgba(2, 6, 23, 0.56);
+    border-color: rgba(148, 163, 184, 0.18);
+  }
+  .add-card {
+    border-radius: 16px;
+    border-color: rgba(45, 212, 191, 0.24);
+    color: #99f6e4;
+    background: rgba(45, 212, 191, 0.05);
+  }
+  .add-card:hover {
+    border-color: rgba(45, 212, 191, 0.52);
+    background: rgba(45, 212, 191, 0.1);
+  }
+  .admin-toolstrip {
+    align-items: center;
+  }
+  .admin-toolstrip-actions button {
+    min-height: 34px;
+    white-space: nowrap;
+  }
+  .tools-menu-panel {
+    background: rgba(12, 18, 32, 0.98);
+    border-color: rgba(45, 212, 191, 0.24);
+    z-index: 2000;
+    max-width: min(260px, calc(100vw - 24px));
+    max-height: min(72vh, 520px);
+    overflow-y: auto;
+  }
+  .modal,
+  .app-dialog,
+  .guide-popup,
+  .supported-popup,
+  .msg-popup,
+  #healthPopup,
+  #auditPopup,
+  #backupPopup,
+  #updateCenterPopup {
+    background: rgba(12, 18, 32, 0.98);
+    border-color: rgba(148, 163, 184, 0.18);
+  }
+  @media (max-width: 900px) {
+    body {
+      padding: 12px 10px 88px;
+    }
+    .header {
+      padding: 22px 16px 18px;
+      border-radius: 18px;
+    }
+    .header h1 {
+      font-size: 30px;
+      padding-right: 112px;
+    }
+    .header p {
+      padding-right: 104px;
+    }
+    .header-open-source {
+      max-width: 100%;
+      padding-right: 0;
+    }
+    .theme-switch {
+      top: 14px;
+      right: 14px;
+    }
+    .user-bar .user-actions {
+      justify-content: flex-start;
+    }
+    .user-bar .user-actions > button,
+    .tools-menu-btn {
+      max-width: 100%;
+    }
+    .stats-overview {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .grid,
+    .quick-access-section .quick-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .systems-meta-bar,
+    .systems-meta-main,
+    .systems-meta-filters,
+    .systems-meta-actions {
+      align-items: stretch;
+      width: 100%;
+    }
+    .systems-meta-actions button {
+      flex: 1 1 110px;
+    }
+  }
+  @media (max-width: 560px) {
+    .stats-overview {
+      grid-template-columns: 1fr;
+    }
+    .card {
+      min-height: 104px;
+      padding: 16px 13px;
+    }
+    .card-info h3 {
+      padding-right: 0;
+    }
+    .admin-toolstrip-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .admin-toolstrip-actions button {
+      min-width: 0;
+      white-space: normal;
+    }
   }
 </style>
 </head>
@@ -2709,10 +3434,6 @@
     </a>
   </div>
   <button id="langToggleBtn" class="header-lang-switch" onclick="toggleLanguageMode()" title="切换语言 / Switch language">🌐 中文</button>
-  <div class="theme-switch" onclick="toggleTheme()" title="切换主题 (Ctrl+Shift+T)">
-    <span class="icon-sun">☀️</span>
-    <span class="icon-moon">🌙</span>
-  </div>
 </div>
 
 <!-- 用户栏 -->
@@ -2738,9 +3459,6 @@
       <div class="tools-menu-panel" id="toolsMenuPanel">
         <button id="densityModeBtn" onclick="toggleDensityMode()">📏 间距模式：标准</button>
         <button id="compactModeBtn" data-full="🧩 精简模式" data-compact="🧩 标准模式" onclick="toggleCompactMode()">🧩 精简模式</button>
-        <button id="uiThemeLightBtn" onclick="useUiThemeLight()">☀️ AntD 白色主题</button>
-        <button id="uiThemeDarkBtn" onclick="useUiThemeDark()">🌙 AntD 黑色主题</button>
-        <button id="uiThemeDefaultBtn" onclick="useUiThemeDefault()">↩️ 还原默认样式</button>
         <button id="groupFilterToggleBtn" onclick="toggleSystemControls();closeToolsMenu()">🧩 展开分组筛选</button>
         <button id="auditBtn" onclick="closeToolsMenu();toggleAuditPopup()" style="display:none;">🧾 审计日志</button>
         <button id="backupBtn" onclick="closeToolsMenu();toggleBackupPopup()" style="display:none;">💾 数据备份</button>
@@ -3522,39 +4240,21 @@
 <script src="js/qr-decoder.js"></script>
 <script>
 
-// ============ 主题切换 ============
-function toggleTheme() {
-  if (typeof uiThemeMode !== 'undefined' && uiThemeMode === 'antd-light') {
-    setUiThemeMode('antd-dark', false);
-    return;
-  }
-  if (typeof uiThemeMode !== 'undefined' && uiThemeMode === 'antd-dark') {
-    setUiThemeMode('antd-light', false);
-    return;
-  }
-  const body = document.body;
-  const isLight = body.getAttribute('data-theme') === 'light';
-  const newTheme = isLight ? 'dark' : 'light';
-  body.setAttribute('data-theme', newTheme);
-  localStorage.setItem('sso_theme', newTheme);
-
-  // 显示提示
-  showToast(newTheme === 'light'
-    ? tr('已切换到亮色主题 ☀️', 'Switched to light theme ☀️')
-    : tr('已切换到暗色主题 🌙', 'Switched to dark theme 🌙'));
-
-  console.log('[Theme] Switched to ' + newTheme + ' theme');
+// ============ 默认主题 ============
+function enforceDefaultTheme() {
+  document.body.removeAttribute('data-theme');
+  document.body.classList.remove('ui-antd-light', 'ui-antd-dark');
+  try {
+    localStorage.removeItem('sso_theme');
+    localStorage.removeItem('sso_ui_theme_mode_v1');
+  } catch (e) {}
 }
+enforceDefaultTheme();
 
-// 初始化主题（默认深色）
-(function initTheme() {
-  const saved = localStorage.getItem('sso_theme');
-  if (saved) {
-    document.body.setAttribute('data-theme', saved);
-  }
-  // 默认不设置任何主题，使用 CSS 默认的深色主题
-  console.log('[Theme] Initialized: ' + (document.body.getAttribute('data-theme') || 'dark'));
-})();
+function updateUiThemeButtons() {}
+function initUiThemeMode() {
+  enforceDefaultTheme();
+}
 
 // ============ Command Palette ============
 let cmdSelectedIndex = 0;
@@ -3564,11 +4264,6 @@ document.addEventListener('keydown', function(e) {
   if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
     e.preventDefault();
     openCmdPalette();
-  }
-  // Ctrl+Shift+T - 切换主题
-  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'T') {
-    e.preventDefault();
-    toggleTheme();
   }
   // Esc - 关闭弹窗
   if (e.key === 'Escape') {
@@ -3635,12 +4330,6 @@ function renderCmdList(keyword) {
     results.push({
       icon: '➕', title: tr('添加新系统', 'Add New System'), desc: 'Command',
       action: () => { closeCmdPalette(); openAdd('test'); }
-    });
-  }
-  if (!kw || '切换主题 theme'.includes(kw)) {
-    results.push({
-      icon: '🌓', title: tr('切换亮色/暗色主题', 'Toggle light/dark theme'), desc: 'Command',
-      action: () => { closeCmdPalette(); toggleTheme(); }
     });
   }
   if (!kw || '精简模式 compact'.includes(kw)) {
@@ -4194,12 +4883,10 @@ const FAVORITES_KEY = 'sso_favorites_v1_' + (currentUser || 'guest');
 const RECENT_VISITS_KEY = 'sso_recent_visits_v1_' + (currentUser || 'guest');
 const ANNOUNCE_DISMISS_KEY = 'sso_announce_dismiss_v1_' + (currentUser || 'guest');
 const SYSTEM_CONTROLS_VISIBLE_KEY = 'sso_system_controls_visible_v1';
-const UI_THEME_MODE_KEY = 'sso_ui_theme_mode_v1';
 const LOGIN_RULE_SAMPLE_CACHE_KEY = 'sso_login_rule_sample_cache_v1';
 let compactModeEnabled = false;
 let enterpriseDensityEnabled = false;
 let systemControlsVisible = false;
-let uiThemeMode = 'default';
 let groupMode = 'env';
 let selectedDepartment = '';
 let selectedTag = '';
@@ -4860,69 +5547,6 @@ function initCompactMode() {
   setCompactMode(localStorage.getItem(COMPACT_MODE_KEY) === '1', true);
 }
 
-function updateUiThemeButtons() {
-  const lightBtn = document.getElementById('uiThemeLightBtn');
-  const darkBtn = document.getElementById('uiThemeDarkBtn');
-  const defaultBtn = document.getElementById('uiThemeDefaultBtn');
-  if (lightBtn) lightBtn.textContent = (uiThemeMode === 'antd-light' ? '✅ ' : '') + t('themeLight');
-  if (darkBtn) darkBtn.textContent = (uiThemeMode === 'antd-dark' ? '✅ ' : '') + t('themeDark');
-  if (defaultBtn) defaultBtn.textContent = (uiThemeMode === 'default' ? '✅ ' : '') + t('themeDefault');
-}
-
-function applyUiThemeMode() {
-  document.body.classList.remove('ui-antd-light', 'ui-antd-dark');
-  if (uiThemeMode === 'antd-light') {
-    document.body.classList.add('ui-antd-light');
-    document.body.setAttribute('data-theme', 'light');
-  } else if (uiThemeMode === 'antd-dark') {
-    document.body.classList.add('ui-antd-dark');
-    document.body.setAttribute('data-theme', 'dark');
-  } else {
-    const savedTheme = localStorage.getItem('sso_theme');
-    if (savedTheme === 'light') {
-      document.body.setAttribute('data-theme', 'light');
-    } else {
-      document.body.setAttribute('data-theme', 'dark');
-    }
-  }
-  const link = document.getElementById('antdUiCss');
-  if (link) {
-    link.disabled = uiThemeMode === 'default';
-  }
-  updateUiThemeButtons();
-}
-
-function setUiThemeMode(mode, silent) {
-  const safeMode = ['default', 'antd-light', 'antd-dark'].includes(mode) ? mode : 'default';
-  uiThemeMode = safeMode;
-  localStorage.setItem(UI_THEME_MODE_KEY, uiThemeMode);
-  applyUiThemeMode();
-  if (!silent) {
-    if (uiThemeMode === 'antd-light') showToast(tr('已切换：AntD 白色主题', 'Switched: AntD Light Theme'), 'info');
-    else if (uiThemeMode === 'antd-dark') showToast(tr('已切换：AntD 黑色主题', 'Switched: AntD Dark Theme'), 'info');
-    else showToast(tr('已恢复默认样式', 'Restored default style'), 'info');
-  }
-}
-
-function useUiThemeLight() {
-  setUiThemeMode('antd-light', false);
-  closeToolsMenu();
-}
-
-function useUiThemeDark() {
-  setUiThemeMode('antd-dark', false);
-  closeToolsMenu();
-}
-
-function useUiThemeDefault() {
-  setUiThemeMode('default', false);
-  closeToolsMenu();
-}
-
-function initUiThemeMode() {
-  setUiThemeMode(localStorage.getItem(UI_THEME_MODE_KEY) || 'default', true);
-}
-
 function applySystemControlsVisibility() {
   const panel = document.getElementById('systemControls');
   const btn = document.getElementById('groupFilterToggleBtn');
@@ -5555,16 +6179,17 @@ function renderQuickAccessCard(system, canEdit) {
     + ' data-system-key="' + systemKey + '"'
     + ' onclick="' + escapeAttr(openCall) + '"'
     + ' oncontextmenu="' + escapeAttr(contextCall) + '">';
-  html += '<button class="card-favorite-btn' + favClass + '" title="' + (isFavorite(system) ? tr('取消收藏', 'Remove favorite') : tr('加入收藏', 'Add favorite')) + '"'
+  let opsHtml = '<div class="card-ops-row"><button class="card-favorite-btn' + favClass + '" title="' + (isFavorite(system) ? tr('取消收藏', 'Remove favorite') : tr('加入收藏', 'Add favorite')) + '"'
     + ' onclick="' + escapeAttr(favoriteCall) + '">' + (isFavorite(system) ? '★' : '☆') + '</button>';
   if (canEdit) {
-    html += '<div class="card-actions">'
+    opsHtml += '<div class="card-actions">'
       + '<button onclick="' + escapeAttr(pinCall) + '" title="' + (system.pinned ? tr('取消置顶', 'Unpin') : tr('跨设备置顶', 'Pin across devices')) + '">📌</button>'
       + '<button onclick="' + escapeAttr(duplicateCall) + '" title="' + tr('复制卡片', 'Duplicate card') + '">📄</button>'
       + '<button onclick="' + escapeAttr(editCall) + '" title="' + tr('编辑', 'Edit') + '">✏️</button>'
       + '<button class="del" onclick="' + escapeAttr(deleteCall) + '" title="' + tr('删除', 'Delete') + '">🗑</button>'
       + '</div>';
   }
+  opsHtml += '</div>';
   const tags = getSystemTags(system).slice(0, 3);
   const dept = getSystemDepartment(system);
   html += '<div class="card-icon" style="background:' + getIconGradient(getSmartIcon(system.name, system.icon)) + ';font-size:20px;">' + getSmartIcon(system.name, system.icon) + '</div>'
@@ -5581,6 +6206,7 @@ function renderQuickAccessCard(system, canEdit) {
     });
     html += '</div>';
   }
+  html += opsHtml;
   html += '</div><div class="card-arrow">→</div></div>';
   return html;
 }
@@ -5643,6 +6269,34 @@ function renderStatsOverview(favoriteCount, recentCount) {
       reachCardEl.classList.remove('health-good', 'health-warn', 'health-bad');
     }
   }
+}
+
+function renderSystemsMetaBar(totalMatched) {
+  const box = document.getElementById('systemsMetaBar');
+  if (!box) return;
+  const canEdit = isEditable && isAuthenticated && isRoleWritable(userRole);
+  const activeFilters = [];
+  if (searchKeyword) activeFilters.push(tr('搜索中', 'Searching'));
+  if (selectedDepartment) activeFilters.push(selectedDepartment);
+  if (selectedTag) activeFilters.push('#' + selectedTag);
+  if (groupMode && groupMode !== 'env') activeFilters.push(tr('分组：', 'Group: ') + groupMode);
+  box.innerHTML = ''
+    + '<div class="systems-meta-main">'
+    + '  <div class="systems-meta-title">' + escapeHtml(tr('系统列表', 'System Library')) + '</div>'
+    + '  <div class="systems-meta-count">' + escapeHtml(tr('共 ' + totalMatched + ' 个系统', totalMatched + ' systems')) + '</div>'
+    + '</div>'
+    + '<div class="systems-meta-filters">'
+    + (activeFilters.length
+      ? activeFilters.slice(0, 4).map(function(item) {
+          return '<span class="systems-meta-chip">' + escapeHtml(item) + '</span>';
+        }).join('')
+      : '<span class="systems-meta-chip">' + escapeHtml(tr('当前无筛选', 'No active filters')) + '</span>')
+    + '</div>'
+    + '<div class="systems-meta-actions">'
+    + '  <button type="button" onclick="document.getElementById(\'searchInput\').focus()">' + escapeHtml(tr('🔍 搜索', 'Search')) + '</button>'
+    + '  <button type="button" onclick="toggleSystemControls()">' + escapeHtml(tr('🧩 筛选', 'Filters')) + '</button>'
+    + (canEdit ? '<button type="button" onclick="openAdd(\'test\')">' + escapeHtml(tr('＋ 添加系统', '+ Add')) + '</button>' : '')
+    + '</div>';
 }
 
 function renderQuickAccess() {
@@ -5832,7 +6486,8 @@ async function loginWithPassword(pwd, saveLegacyPassword = false, remember = fal
   return true;
 }
 
-async function authenticateUser() {
+async function authenticateUser(interactive) {
+  const shouldPrompt = interactive !== false;
   if (!currentUser) return; // 访客模式不需要验证
 
   try {
@@ -5841,6 +6496,7 @@ async function authenticateUser() {
     const checkData = await checkRes.json();
 
     if (!checkData.registered) {
+      if (!shouldPrompt) return;
       const registerForm = await showPasswordEntryDialog({
         title: tr('欢迎使用秒登', 'Welcome to 秒登'),
         message: languageMode === 'en'
@@ -5883,6 +6539,10 @@ async function authenticateUser() {
         if (ok) return;
         userPassword = '';
         sessionStorage.removeItem(AUTH_PWD_KEY);
+      }
+
+      if (!shouldPrompt) {
+        return;
       }
 
       const loginForm = await showPasswordEntryDialog({
@@ -6001,7 +6661,7 @@ function renderFocusWorkbench() {
   const hasSystems = Array.isArray(systems) && systems.length > 0;
   const hasAuthedUser = !!(isEditable && isAuthenticated);
   const hasSelectedUser = !!currentUser;
-  const shouldShow = !hasAuthedUser || !hasPlugin || !hasSystems || !localStorage.getItem(ONBOARD_DONE_KEY);
+  const shouldShow = !hasAuthedUser || !hasPlugin || !hasSystems;
 
   box.hidden = !shouldShow;
   const installBanner = document.querySelector('.install-banner');
@@ -6100,6 +6760,28 @@ function toggleLikeSectionVisibility() {
   box.style.display = nextHidden;
 }
 
+function mountLikeSection() {
+  const box = document.getElementById('likeSection');
+  const anchor = document.getElementById('statsOverview');
+  if (!box || !anchor) return;
+  if (box.previousElementSibling !== anchor) {
+    anchor.insertAdjacentElement('afterend', box);
+  }
+  box.classList.add('prominent');
+  box.style.display = 'flex';
+  if (!box.querySelector('.like-copy')) {
+    const infoWrap = box.querySelector('div:last-child');
+    if (infoWrap) {
+      infoWrap.classList.add('like-copy');
+      infoWrap.innerHTML = ''
+        + '<div class="like-kicker">' + escapeHtml(tr('给项目一点支持', 'Support the project')) + '</div>'
+        + '<div class="like-mainline"><span class="like-headline">' + escapeHtml(tr('点亮这个小红心', 'Light up the little heart')) + '</span>'
+        + '<span><span class="like-count" id="likeCount">0</span> <span class="like-text" id="likeTextLabel">' + escapeHtml(tr('人觉得很赞', 'people liked this')) + '</span></span></div>'
+        + '<div class="like-users" id="likeUsers"></div>';
+    }
+  }
+}
+
 function triggerHubActionOnKey(event, action) {
   if (!event) return;
   if (event.key === 'Enter' || event.key === ' ') {
@@ -6159,32 +6841,26 @@ function renderAdminWorkbench() {
     return;
   }
   box.innerHTML = ''
-    + '<div class="hub-head"><div><div class="hub-title">' + escapeHtml(tr('🛡 管理员中心', '🛡 Admin Center')) + '</div><div class="hub-subtitle">' + escapeHtml(tr('将运维与治理能力集中到这里，避免和日常登录主路径混在一起。', 'Operational and governance tools live here, separate from the daily login workflow.')) + '</div></div></div>'
-    + '<div class="hub-grid">'
-    + '  <div class="hub-card hub-card-clickable" role="button" tabindex="0" data-popup-trigger="healthPopup" onclick="invokeHubAction(event, \'health\')" onkeydown="triggerHubActionOnKey(event, \'health\')"><div class="hub-card-title">' + escapeHtml(tr('📈 系统健康', '📈 System Health')) + '</div><div class="hub-card-sub">' + escapeHtml(tr('集中查看系统可达性，适合值班与巡检。', 'Check reachability in one place for ops and daily巡检.')) + '</div><div class="hub-card-actions"><button type="button" data-popup-trigger="healthPopup" onclick="invokeHubAction(event, \'health\')">' + escapeHtml(tr('立即扫描', 'Scan now')) + '</button></div></div>'
-    + '  <div class="hub-card hub-card-clickable" role="button" tabindex="0" data-popup-trigger="auditPopup" onclick="invokeHubAction(event, \'audit\')" onkeydown="triggerHubActionOnKey(event, \'audit\')"><div class="hub-card-title">' + escapeHtml(tr('🧾 审计日志', '🧾 Audit Logs')) + '</div><div class="hub-card-sub">' + escapeHtml(tr('查看写操作审计记录，追踪用户与系统修改。', 'Inspect write-operation history for users and systems.')) + '</div><div class="hub-card-actions"><button type="button" data-popup-trigger="auditPopup" onclick="invokeHubAction(event, \'audit\')">' + escapeHtml(tr('打开审计', 'Open audits')) + '</button></div></div>'
-    + '  <div class="hub-card hub-card-clickable" role="button" tabindex="0" data-popup-trigger="backupPopup" onclick="invokeHubAction(event, \'backup\')" onkeydown="triggerHubActionOnKey(event, \'backup\')"><div class="hub-card-title">' + escapeHtml(tr('💾 数据备份', '💾 Backups')) + '</div><div class="hub-card-sub">' + escapeHtml(tr('手动创建备份、查看保留情况并执行一键恢复。', 'Create backups, inspect retention, and restore safely.')) + '</div><div class="hub-card-actions"><button type="button" data-popup-trigger="backupPopup" onclick="invokeHubAction(event, \'backup\')">' + escapeHtml(tr('管理备份', 'Manage backups')) + '</button></div></div>'
-    + '  <div class="hub-card hub-card-clickable" role="button" tabindex="0" data-popup-trigger="updateCenterPopup" onclick="invokeHubAction(event, \'update-center\')" onkeydown="triggerHubActionOnKey(event, \'update-center\')"><div class="hub-card-title">' + escapeHtml(tr('🧩 版本中心', '🧩 Update Center')) + '</div><div class="hub-card-sub">' + escapeHtml(tr('统一查看门户/插件版本与升级状态。', 'Review portal and plugin versions in one place.')) + '</div><div class="hub-card-actions"><button type="button" data-popup-trigger="updateCenterPopup" onclick="invokeHubAction(event, \'update-center\')">' + escapeHtml(tr('查看版本', 'View versions')) + '</button></div></div>'
+    + '<div class="admin-toolstrip">'
+    + '  <div><div class="hub-title">' + escapeHtml(tr('🛡 管理员中心', '🛡 Admin Center')) + '</div><div class="hub-subtitle">' + escapeHtml(tr('运维与治理入口收拢为工具条，主界面优先展示系统。', 'Ops and governance actions stay compact so systems remain primary.')) + '</div></div>'
+    + '  <div class="admin-toolstrip-actions">'
+    + '    <button type="button" data-popup-trigger="healthPopup" onclick="invokeHubAction(event, \'health\')">' + escapeHtml(tr('📈 立即扫描', '📈 Scan now')) + '</button>'
+    + '    <button type="button" data-popup-trigger="auditPopup" onclick="invokeHubAction(event, \'audit\')">' + escapeHtml(tr('🧾 打开审计', '🧾 Open audits')) + '</button>'
+    + '    <button type="button" data-popup-trigger="backupPopup" onclick="invokeHubAction(event, \'backup\')">' + escapeHtml(tr('💾 管理备份', '💾 Manage backups')) + '</button>'
+    + '    <button type="button" data-popup-trigger="updateCenterPopup" onclick="invokeHubAction(event, \'update-center\')">' + escapeHtml(tr('🧩 查看版本', '🧩 View versions')) + '</button>'
+    + '  </div>'
     + '</div>';
 }
 
 function renderSupportHub() {
   const box = document.getElementById('supportHub');
   if (!box) return;
-  const likeCount = (document.getElementById('likeCount') || {}).textContent || '0';
   const floatingMsgBtn = document.querySelector('.msg-btn');
   const floatingSupportBtn = document.getElementById('supportedBtn');
   if (floatingMsgBtn) floatingMsgBtn.style.display = 'none';
   if (floatingSupportBtn) floatingSupportBtn.style.display = 'none';
-  box.innerHTML = ''
-    + '<div class="hub-head"><div><div class="hub-title">' + escapeHtml(tr('🧰 帮助与反馈', '🧰 Help & Feedback')) + '</div><div class="hub-subtitle">' + escapeHtml(tr('把安装、帮助、支持范围与反馈入口集中到一个区域，减少首页漂浮干扰。', 'Collect install, help, support scope, and feedback in one quieter place.')) + '</div></div></div>'
-    + '<div class="hub-grid">'
-    + '  <div class="hub-card hub-card-clickable" role="button" tabindex="0" onclick="invokeHubAction(event, \'install\')" onkeydown="triggerHubActionOnKey(event, \'install\')"><div class="hub-card-title">' + escapeHtml(tr('🔌 插件安装 / 更新', '🔌 Plugin Install / Update')) + '</div><div class="hub-card-sub">' + escapeHtml(tr('统一从这里打开安装弹窗、查看升级说明。', 'Open install instructions and upgrade guidance here.')) + '</div><div class="hub-card-actions"><button type="button" onclick="invokeHubAction(event, \'install\')">' + escapeHtml(tr('安装插件', 'Install plugin')) + '</button><button type="button" class="secondary" data-popup-trigger="updateCenterPopup" onclick="invokeHubAction(event, \'update-center\')">' + escapeHtml(tr('查看更新', 'View updates')) + '</button></div></div>'
-    + '  <div class="hub-card hub-card-clickable" role="button" tabindex="0" data-popup-trigger="guidePopup" onclick="invokeHubAction(event, \'guide\')" onkeydown="triggerHubActionOnKey(event, \'guide\')"><div class="hub-card-title">' + escapeHtml(tr('📖 使用帮助', '📖 Guides')) + '</div><div class="hub-card-sub">' + escapeHtml(tr('查看完整使用指南、自动登录支持范围与变更记录。', 'Browse the guide, support scope, and latest changelog.')) + '</div><div class="hub-card-actions"><button type="button" data-popup-trigger="guidePopup" onclick="invokeHubAction(event, \'guide\')">' + escapeHtml(tr('使用指南', 'Guide')) + '</button><button type="button" class="secondary" data-popup-trigger="supportedPopup" onclick="invokeHubAction(event, \'supported\')">' + escapeHtml(tr('支持范围', 'Supported systems')) + '</button><button type="button" class="secondary" data-popup-trigger="changelogPopup" onclick="invokeHubAction(event, \'changelog\')">' + escapeHtml(tr('更新日志', 'Changelog')) + '</button></div></div>'
-    + '  <div class="hub-card hub-card-clickable" role="button" tabindex="0" onclick="openLoginRulesCenter()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openLoginRulesCenter();}"><div class="hub-card-title">' + escapeHtml(tr('🧠 登录规则中心', '🧠 Login Rule Center')) + '</div><div class="hub-card-sub">' + escapeHtml(tr('把不同登录页的选择器、提交策略和 OTP 弹窗沉淀成可复用规则。', 'Capture selectors, submit strategies, and OTP dialogs as reusable login rules.')) + '</div><div class="hub-card-actions"><button type="button" onclick="event.stopPropagation();openLoginRulesCenter()">' + escapeHtml(tr('配置规则', 'Configure rules')) + '</button></div></div>'
-    + '  <div class="hub-card hub-card-clickable" role="button" tabindex="0" data-popup-trigger="msgPopup" onclick="invokeHubAction(event, \'message\')" onkeydown="triggerHubActionOnKey(event, \'message\')"><div class="hub-card-title">' + escapeHtml(tr('💬 反馈入口', '💬 Feedback')) + '</div><div class="hub-card-sub">' + escapeHtml(tr('留言板保留，但不再占据首页悬浮主视线。', 'The message board stays available without dominating the main view.')) + '</div><div class="hub-card-actions"><button type="button" data-popup-trigger="msgPopup" onclick="invokeHubAction(event, \'message\')">' + escapeHtml(tr('打开留言板', 'Open message board')) + '</button></div></div>'
-    + '  <div class="hub-card hub-card-clickable" role="button" tabindex="0" onclick="invokeHubAction(event, \'like\')" onkeydown="triggerHubActionOnKey(event, \'like\')"><div class="hub-card-title">' + escapeHtml(tr('🤍 产品支持', '🤍 Product Support')) + '</div><div class="hub-card-sub">' + escapeHtml(tr('当前已有 ', 'Current likes: ') + likeCount + tr(' 位同事点赞支持。', ' supporters.')) + '</div><div class="hub-card-actions"><button type="button" onclick="invokeHubAction(event, \'like\')">' + escapeHtml(tr('展开点赞区', 'Toggle support area')) + '</button></div></div>'
-    + '</div>';
+  box.hidden = true;
+  box.innerHTML = '';
 }
 
 // 加载用户列表
@@ -6417,20 +7093,20 @@ function renderSystemCardHtml(s, canEdit) {
   let html = '<div class="card' + (isLocked ? ' card-locked' : '') + '"'
     + ' onclick="' + escapeAttr(openCall) + '"'
     + ' oncontextmenu="' + escapeAttr(contextCall) + '">';
-  html += '<button class="card-favorite-btn' + (favorite ? ' active' : '') + '"'
+  let opsHtml = '<div class="card-ops-row"><button class="card-favorite-btn' + (favorite ? ' active' : '') + '"'
     + ' title="' + (favorite ? tr('取消收藏', 'Remove favorite') : tr('加入收藏', 'Add favorite')) + '"'
     + ' onclick="' + escapeAttr(favoriteCall) + '">'
     + (favorite ? '★' : '☆')
     + '</button>';
-  html += '<div class="card-actions">'
+  opsHtml += '<div class="card-actions">'
     + '<button onclick="' + escapeAttr(copyCall) + '" title="' + tr('复制登录地址', 'Copy login URL') + '">🔗</button>';
   if (canEdit) {
-    html += '<button onclick="' + escapeAttr(pinCall) + '" title="' + (s.pinned ? tr('取消置顶', 'Unpin') : tr('跨设备置顶', 'Pin across devices')) + '">📌</button>'
+    opsHtml += '<button onclick="' + escapeAttr(pinCall) + '" title="' + (s.pinned ? tr('取消置顶', 'Unpin') : tr('跨设备置顶', 'Pin across devices')) + '">📌</button>'
       + '<button onclick="' + escapeAttr(duplicateCall) + '" title="' + tr('复制卡片', 'Duplicate card') + '">📄</button>'
       + '<button onclick="' + escapeAttr(editCall) + '" title="' + tr('编辑', 'Edit') + '">✏️</button>'
       + '<button class="del" onclick="' + escapeAttr(deleteCall) + '" title="' + tr('删除', 'Delete') + '">🗑</button>';
   }
-  html += '</div>';
+  opsHtml += '</div></div>';
 
   html += '<div class="card-icon" style="background:' + getIconGradient(getSmartIcon(s.name, s.icon)) + ';font-size:20px;">'
     + getSmartIcon(s.name, s.icon)
@@ -6450,6 +7126,7 @@ function renderSystemCardHtml(s, canEdit) {
     });
     html += '</div>';
   }
+  html += opsHtml;
   html += '</div><div class="card-arrow">→</div></div>';
   return html;
 }
@@ -6648,7 +7325,8 @@ function renderSystems() {
       + '</div>';
   }
 
-  container.innerHTML = html;
+  container.innerHTML = '<div class="systems-meta-bar" id="systemsMetaBar"></div>' + html;
+  renderSystemsMetaBar(totalMatched);
 }
 
 function openSystemById(id) {
@@ -9410,6 +10088,7 @@ async function loadLikes() {
 }
 
 function updateLikeUI(data) {
+  mountLikeSection();
   const count = data.count || 0;
   const users = data.users || [];
   const likeUser = currentUser || 'anonymous';
@@ -9910,6 +10589,87 @@ function toggleMsgPopup() {
   }
 }
 
+function renderLayoutDebugInfo() {
+  if (!urlParams.has('debugLayout')) return;
+  var root = document.documentElement;
+  var viewport = root.clientWidth || 0;
+  var scroll = root.scrollWidth || 0;
+  var offenders = Array.from(document.body.querySelectorAll('*')).map(function(el) {
+    var rect = el.getBoundingClientRect();
+    return {
+      tag: el.tagName,
+      id: el.id || '',
+      cls: String(el.className || '').trim(),
+      left: Math.round(rect.left),
+      right: Math.round(rect.right),
+      width: Math.round(rect.width)
+    };
+  }).filter(function(item) {
+    return item.right > viewport + 1 || item.left < -1 || item.width > viewport + 1;
+  }).slice(0, 12);
+  var box = document.getElementById('layoutDebug');
+  if (!box) {
+    box = document.createElement('pre');
+    box.id = 'layoutDebug';
+    box.style.position = 'fixed';
+    box.style.left = '12px';
+    box.style.bottom = '12px';
+    box.style.zIndex = '5000';
+    box.style.maxWidth = 'min(720px, calc(100vw - 24px))';
+    box.style.maxHeight = '40vh';
+    box.style.overflow = 'auto';
+    box.style.padding = '10px 12px';
+    box.style.borderRadius = '10px';
+    box.style.background = 'rgba(6,10,20,0.92)';
+    box.style.color = '#d8e4ff';
+    box.style.fontSize = '11px';
+    box.style.lineHeight = '1.5';
+    box.style.whiteSpace = 'pre-wrap';
+    box.style.wordBreak = 'break-word';
+    document.body.appendChild(box);
+  }
+  box.textContent = JSON.stringify({
+    viewport: viewport,
+    scrollWidth: scroll,
+    overflow: scroll - viewport,
+    offenders: offenders
+  }, null, 2);
+}
+
+function runDebugPopupScenario() {
+  var target = (urlParams.get('autoPopup') || '').trim();
+  if (!target) return;
+  switch (target) {
+    case 'guide':
+      toggleGuidePopup();
+      break;
+    case 'supported':
+      toggleSupportedPopup();
+      break;
+    case 'changelog':
+      toggleChangelogPopup();
+      break;
+    case 'update-center':
+      toggleUpdateCenterPopup();
+      break;
+    case 'health':
+      toggleHealthPopup();
+      break;
+    case 'audit':
+      toggleAuditPopup();
+      break;
+    case 'backup':
+      toggleBackupPopup();
+      break;
+    case 'message':
+      toggleMsgPopup();
+      break;
+    default:
+      return;
+  }
+  setTimeout(renderLayoutDebugInfo, 120);
+}
+
 async function sendMessage() {
   const input = document.getElementById('msgInput');
   const text = input.value.trim();
@@ -9961,14 +10721,17 @@ async function boot() {
   }
   hydrateHealthSnapshot();
   loadHomepageAnnouncement();
-  await authenticateUser();
+  await authenticateUser(false);
   initUserBar();
   await loadSystems();
+  mountLikeSection();
   await handlePortalIntentFromHash();
   window.addEventListener('hashchange', handlePortalIntentFromHash);
   setInterval(pollSystemFlowPrefsUpdate, 1200);
   loadLikes();
   loadMessages();
+  renderLayoutDebugInfo();
+  runDebugPopupScenario();
   if (!localStorage.getItem(ONBOARD_DONE_KEY)) {
     setTimeout(openOnboardingWizard, 300);
   }
