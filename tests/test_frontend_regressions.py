@@ -45,6 +45,11 @@ class FrontendRegressionTest(unittest.TestCase):
         self.assertIn("body.enterprise-density .card-actions { gap: 3px; }", PORTAL_HTML)
         self.assertIn("body.enterprise-density .card-favorite-btn {\n    width: 23px;\n    height: 23px;", PORTAL_HTML)
 
+    def test_login_rules_modal_keeps_wide_editor_layout(self):
+        self.assertIn(".modal.login-rules-modal {\n    width: min(1080px, calc(100vw - 40px));\n    max-width: 1080px;\n  }", PORTAL_HTML)
+        self.assertIn("body.enterprise-density .login-rules-modal {\n    width: min(1080px, calc(100vw - 40px));\n    max-width: 1080px;\n  }", PORTAL_HTML)
+        self.assertIn(".login-rules-layout {\n    display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 16px; align-items: start;\n  }", PORTAL_HTML)
+
     def test_login_rule_center_exposes_submit_delay_for_token_pages(self):
         self.assertIn('label for="lr_submit_delay_ms">提交前等待（毫秒）</label>', PORTAL_HTML)
         self.assertIn("K8s 模板默认 700ms", PORTAL_HTML)
