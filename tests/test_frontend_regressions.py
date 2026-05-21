@@ -55,6 +55,13 @@ class FrontendRegressionTest(unittest.TestCase):
         self.assertIn("K8s 模板默认 700ms", PORTAL_HTML)
         self.assertIn("submit_delay_ms: 700", PORTAL_HTML)
 
+    def test_auth_flow_prompts_new_users_and_refreshes_login_state(self):
+        self.assertIn("async function refreshAuthDependentViews() {", PORTAL_HTML)
+        self.assertIn("initUserBar();\n  await loadSystems();\n  mountLikeSection();", PORTAL_HTML)
+        self.assertIn("if (!checkData.registered) {\n      const registerForm = await showPasswordEntryDialog({", PORTAL_HTML)
+        self.assertNotIn("if (!checkData.registered) {\n      if (!shouldPrompt) return;", PORTAL_HTML)
+        self.assertIn("await refreshAuthDependentViews();\n          return true;", PORTAL_HTML)
+
 
 if __name__ == "__main__":
     unittest.main()

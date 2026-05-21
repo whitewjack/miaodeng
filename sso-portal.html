@@ -6496,6 +6496,12 @@ async function loginWithPassword(pwd, saveLegacyPassword = false, remember = fal
   return true;
 }
 
+async function refreshAuthDependentViews() {
+  initUserBar();
+  await loadSystems();
+  mountLikeSection();
+}
+
 async function authenticateUser(interactive) {
   const shouldPrompt = interactive !== false;
   if (!currentUser) return; // 访客模式不需要验证
@@ -6506,7 +6512,6 @@ async function authenticateUser(interactive) {
     const checkData = await checkRes.json();
 
     if (!checkData.registered) {
-      if (!shouldPrompt) return;
       const registerForm = await showPasswordEntryDialog({
         title: tr('欢迎使用秒登', 'Welcome to 秒登'),
         message: languageMode === 'en'
@@ -6529,6 +6534,8 @@ async function authenticateUser(interactive) {
         const ok = await loginWithPassword(registerForm.password, true, registerForm.remember);
         if (ok) {
           showToast(tr('注册成功！已自动从模板复制系统列表', 'Registered successfully! Systems were copied from template.'));
+          await refreshAuthDependentViews();
+          return true;
         } else {
           showToast(tr('注册成功，但自动登录失败，请手动重试', 'Registered, but auto-login failed. Please retry manually.'), 'error');
         }
@@ -6539,14 +6546,18 @@ async function authenticateUser(interactive) {
     } else {
       // 优先校验缓存 token（页面刷新免输密码）
       if (await restoreSessionFromStorage(true)) {
-        return;
+        if (shouldPrompt) await refreshAuthDependentViews();
+        return true;
       }
 
       // 兼容旧缓存密码，换取新 token
       if (userPassword) {
         const remember = await askRememberLogin();
         const ok = await loginWithPassword(userPassword, true, remember);
-        if (ok) return;
+        if (ok) {
+          await refreshAuthDependentViews();
+          return true;
+        }
         userPassword = '';
         sessionStorage.removeItem(AUTH_PWD_KEY);
       }
@@ -6571,12 +6582,16 @@ async function authenticateUser(interactive) {
       const ok = await loginWithPassword(loginForm.password, true, loginForm.remember);
       if (!ok) {
         showToast(tr('密码错误，进入只读模式', 'Wrong password, entering read-only mode'), 'error');
+      } else {
+        await refreshAuthDependentViews();
+        return true;
       }
     }
   } catch (e) {
     console.log('认证服务不可用');
     showToast(tr('认证服务暂不可用，当前进入只读模式', 'Auth service unavailable, entering read-only mode'), 'warning');
   }
+  return false;
 }
 
 // 检查是否有编辑权限
