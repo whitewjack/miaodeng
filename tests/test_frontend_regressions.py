@@ -62,6 +62,14 @@ class FrontendRegressionTest(unittest.TestCase):
         self.assertNotIn("if (!checkData.registered) {\n      if (!shouldPrompt) return;", PORTAL_HTML)
         self.assertIn("await refreshAuthDependentViews();\n          return true;", PORTAL_HTML)
 
+    def test_install_modal_offers_separate_chrome_and_edge_packages(self):
+        self.assertIn('id="installChromeZipLink"', PORTAL_HTML)
+        self.assertIn('href="auto-login-extension.zip"', PORTAL_HTML)
+        self.assertIn('id="installEdgeZipLink"', PORTAL_HTML)
+        self.assertIn('href="auto-login-extension-edge.zip"', PORTAL_HTML)
+        self.assertIn("edge://extensions/", PORTAL_HTML)
+        self.assertIn("edge-extension", PORTAL_HTML)
+
 
 if __name__ == "__main__":
     unittest.main()

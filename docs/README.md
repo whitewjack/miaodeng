@@ -2,7 +2,7 @@
 
 中文 · [English quick links](#english-quick-links)
 
-秒登（MiaoDeng）是一个面向团队内部系统的自托管统一登录门户，支持系统卡片直达、自动登录、Chrome 插件适配和登录规则配置。
+秒登（MiaoDeng）是一个面向团队内部系统的自托管统一登录门户，支持系统卡片直达、自动登录、Chrome / Edge 插件适配和登录规则配置。
 
 这个页面用于集中整理项目文档入口，方便在 GitHub About、README 和门户首页中统一跳转。
 

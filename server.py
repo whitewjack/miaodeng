@@ -72,6 +72,7 @@ STATIC_ALLOWED_FILES = {
     '/bookmarklet.js',
     '/miaodeng-latest.zip',
     '/auto-login-extension.zip',
+    '/auto-login-extension-edge.zip',
     '/auto-login-extension-store.zip',
 }
 STATIC_ALLOWED_PREFIXES = (
@@ -82,11 +83,13 @@ STATIC_ALLOWED_PREFIXES = (
 
 EXTENSION_DIR = os.path.join(DIR, 'chrome-extension')
 EXTENSION_ARCHIVE_AUTO = os.path.join(DIR, 'auto-login-extension.zip')
+EXTENSION_ARCHIVE_EDGE = os.path.join(DIR, 'auto-login-extension-edge.zip')
 EXTENSION_ARCHIVE_STORE = os.path.join(DIR, 'auto-login-extension-store.zip')
 EXTENSION_ARCHIVE_LATEST = os.path.join(DIR, 'miaodeng-latest.zip')
 EXTENSION_ARCHIVE_LOCK = threading.Lock()
 EXTENSION_ARCHIVE_TARGETS = {
     '/auto-login-extension.zip': EXTENSION_ARCHIVE_AUTO,
+    '/auto-login-extension-edge.zip': EXTENSION_ARCHIVE_EDGE,
     '/auto-login-extension-store.zip': EXTENSION_ARCHIVE_STORE,
     '/miaodeng-latest.zip': EXTENSION_ARCHIVE_LATEST,
 }
@@ -1621,15 +1624,27 @@ def _write_zip(zip_path, entries):
                 pass
 
 
-def _build_auto_archive(zip_path):
+def _build_browser_archive(zip_path, folder_name, manifest_file):
     rel_files = _iter_extension_source_files()
     if not rel_files:
         raise FileNotFoundError(f'未找到插件目录: {EXTENSION_DIR}')
     entries = []
+    manifest_files = {'manifest.json', 'manifest-store.json', 'manifest-edge.json'}
     for rel_path in rel_files:
+        if rel_path in manifest_files and rel_path != manifest_file:
+            continue
         src_path = os.path.join(EXTENSION_DIR, rel_path)
-        entries.append((src_path, f'chrome-extension/{rel_path}'))
+        arc_rel_path = 'manifest.json' if rel_path == manifest_file else rel_path
+        entries.append((src_path, f'{folder_name}/{arc_rel_path}'))
     _write_zip(zip_path, entries)
+
+
+def _build_auto_archive(zip_path):
+    _build_browser_archive(zip_path, 'chrome-extension', 'manifest.json')
+
+
+def _build_edge_archive(zip_path):
+    _build_browser_archive(zip_path, 'edge-extension', 'manifest-edge.json')
 
 
 def _build_store_archive(zip_path):
@@ -1638,7 +1653,7 @@ def _build_store_archive(zip_path):
         raise FileNotFoundError(f'未找到插件目录: {EXTENSION_DIR}')
     entries = []
     for rel_path in rel_files:
-        if rel_path == 'manifest.json':
+        if rel_path in ('manifest.json', 'manifest-edge.json'):
             continue
         src_path = os.path.join(EXTENSION_DIR, rel_path)
         arc_path = 'manifest.json' if rel_path == 'manifest-store.json' else rel_path
@@ -1652,8 +1667,10 @@ def ensure_extension_archive(path):
     if not target_path:
         return
     manifest = _read_json_dict_file(os.path.join(EXTENSION_DIR, 'manifest.json'))
+    edge_manifest = _read_json_dict_file(os.path.join(EXTENSION_DIR, 'manifest-edge.json'))
     store_manifest = _read_json_dict_file(os.path.join(EXTENSION_DIR, 'manifest-store.json'))
     latest_version = str(manifest.get('version') or '')
+    edge_version = str(edge_manifest.get('version') or latest_version)
     store_version = str(store_manifest.get('version') or latest_version)
     rel_files = _iter_extension_source_files()
     source_paths = [os.path.join(EXTENSION_DIR, rel) for rel in rel_files]
@@ -1666,6 +1683,15 @@ def ensure_extension_archive(path):
                 'chrome-extension/manifest.json'
             ):
                 _build_auto_archive(target_path)
+            return
+        if path == '/auto-login-extension-edge.zip':
+            if _archive_needs_refresh(
+                target_path,
+                source_paths,
+                edge_version,
+                'edge-extension/manifest.json'
+            ):
+                _build_edge_archive(target_path)
             return
         if path == '/auto-login-extension-store.zip':
             if _archive_needs_refresh(
@@ -1905,6 +1931,7 @@ def get_open_source_stats_payload():
 def get_version_center_payload():
     latest_release = _extract_latest_release_from_changelog()
     ext_manifest = _read_json_dict_file(os.path.join(DIR, 'chrome-extension', 'manifest.json'))
+    ext_edge_manifest = _read_json_dict_file(os.path.join(DIR, 'chrome-extension', 'manifest-edge.json'))
     ext_store_manifest = _read_json_dict_file(os.path.join(DIR, 'chrome-extension', 'manifest-store.json'))
     now = int(time.time())
     return {
@@ -1922,9 +1949,13 @@ def get_version_center_payload():
         },
         'plugin': {
             'latest_version': str(ext_manifest.get('version') or ''),
+            'edge_version': str(ext_edge_manifest.get('version') or ''),
             'store_version': str(ext_store_manifest.get('version') or ''),
             'manifest_url': '/chrome-extension/manifest.json',
+            'edge_manifest_url': '/chrome-extension/manifest-edge.json',
             'store_manifest_url': '/chrome-extension/manifest-store.json',
+            'chrome_archive_url': '/auto-login-extension.zip',
+            'edge_archive_url': '/auto-login-extension-edge.zip',
         },
     }
 

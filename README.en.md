@@ -4,7 +4,7 @@
 
 📚 Docs hub: [`docs/README.md`](./docs/README.md)
 
-Self-hosted portal and Chrome extension for internal system auto-login.
+Self-hosted portal and Chrome / Edge extensions for internal system auto-login.
 
 > Deployment note: the project is currently **frontend + backend in one service**. `server.py` serves both the portal page (`/sso-portal.html`) and backend APIs (`/api/*`), so Docker and local Python startup both bring up the full application together.
 
@@ -62,7 +62,7 @@ If not installed:
 - Centralized portal for internal systems
 - Credential storage for multiple users
 - Configurable login rule center
-- Chrome extension for auto-fill and auto-submit
+- Chrome / Edge extensions for auto-fill and auto-submit
 - Support for password / OTP / TOTP / token-based login flows
 - Audit logs, backups, update center, and Docker deployment
 
@@ -118,17 +118,17 @@ server {
 }
 ```
 
-## Install the Chrome Extension
+## Install the Browser Extension
 
 Recommended flow: **ZIP install**
 
 1. Open the portal
 2. Click **Install Extension**
-3. Download and unzip the extension package
-4. Open `chrome://extensions/` in Chrome
+3. Download the **Chrome** or **Edge** package and unzip it
+4. Open `chrome://extensions/` in Chrome or `edge://extensions/` in Edge
 5. Enable **Developer mode**
 6. Click **Load unpacked**
-7. Select the `chrome-extension` directory
+7. Select `chrome-extension` for Chrome or `edge-extension` for Edge
 8. Open the extension popup
 9. Enter your portal URL and save
 

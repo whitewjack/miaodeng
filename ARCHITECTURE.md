@@ -6,7 +6,7 @@ MiaoDeng is a self-hosted internal login toolkit composed of three main layers:
 
 1. **Portal UI** — the human-facing management console
 2. **Python backend** — the API, storage, auth, backup, and packaging layer
-3. **Chrome extension** — the execution layer that performs login-page matching and auto-fill
+3. **Chrome / Edge extension** — the execution layer that performs login-page matching and auto-fill
 
 ## High-level flow
 
@@ -15,7 +15,7 @@ User -> Portal UI -> Backend API -> SQLite / local data
                            \
                             -> Extension manifests / ZIP package
 
-Browser login page <- Chrome extension <- Backend system/rule payload
+Browser login page <- Chrome / Edge extension <- Backend system/rule payload
 ```
 
 ## Core modules
@@ -52,7 +52,7 @@ Responsibilities:
 - extension ZIP generation
 - version center payload
 
-### 3. Chrome extension
+### 3. Chrome / Edge extension
 
 Main directory:
 
@@ -123,4 +123,3 @@ The default production-friendly path is Docker with a bind-mounted `data/` volum
 - local data ownership
 - pragmatic internal-tool UX
 - privacy-aware open-source publication
-

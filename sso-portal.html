@@ -190,6 +190,46 @@
     max-height: 85vh; overflow-y: auto;
   }
   .modal h2 { font-size: 18px; margin-bottom: 20px; }
+  .browser-download-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .browser-download-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 108px;
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 12px;
+    color: #fff;
+    text-decoration: none;
+    background: rgba(255,255,255,0.06);
+    transition: transform 0.18s, border-color 0.18s, background 0.18s;
+  }
+  .browser-download-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba(0, 212, 255, 0.55);
+    background: rgba(0, 212, 255, 0.1);
+  }
+  .browser-download-card strong {
+    font-size: 15px;
+    line-height: 1.3;
+  }
+  .browser-download-card span {
+    color: #a8b7d8;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  .browser-download-card.edge {
+    border-color: rgba(74, 144, 226, 0.36);
+  }
+  .browser-download-card.edge:hover {
+    border-color: rgba(74, 144, 226, 0.8);
+    background: rgba(74, 144, 226, 0.14);
+  }
   .form-group { margin-bottom: 16px; }
   .form-group label { display: block; font-size: 13px; color: #8892b0; margin-bottom: 6px; }
   .form-group input, .form-group select, .form-group textarea {
@@ -2811,6 +2851,7 @@
     .grid { grid-template-columns: 1fr; }
     .form-row { grid-template-columns: 1fr; }
     .modal { padding: 18px; max-height: 90vh; }
+    .browser-download-grid { grid-template-columns: 1fr; }
     .guide-popup,
     #changelogPopup,
     #updateCenterPopup,
@@ -3739,11 +3780,20 @@
     <p id="installModalDesc" style="color:#8892b0;margin-bottom:20px;font-size:13px;">安装秒登插件后，点击系统卡片即可自动填入凭据并登录。</p>
 
     <div>
-      <div id="installManualTitle" style="color:#8892b0;font-weight:600;margin-bottom:12px;font-size:14px;">📦 ZIP 安装（推荐）</div>
-      <a id="installManualZipLink" href="auto-login-extension.zip" download style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(255,255,255,0.1);color:#fff;text-decoration:none;border-radius:8px;font-size:14px;font-weight:600;border:1px solid rgba(255,255,255,0.2);">📦 下载插件 ZIP</a>
+      <div id="installManualTitle" style="color:#8892b0;font-weight:600;margin-bottom:12px;font-size:14px;">📦 选择浏览器版本下载</div>
+      <div class="browser-download-grid" aria-label="选择插件下载版本">
+        <a id="installChromeZipLink" class="browser-download-card" href="auto-login-extension.zip" download>
+          <strong>🌐 Chrome 版本</strong>
+          <span>适用于 Google Chrome，解压后选择 chrome-extension 文件夹。</span>
+        </a>
+        <a id="installEdgeZipLink" class="browser-download-card edge" href="auto-login-extension-edge.zip" download>
+          <strong>🌀 Edge 版本</strong>
+          <span>适用于 Microsoft Edge，解压后选择 edge-extension 文件夹。</span>
+        </a>
+      </div>
       <div style="font-size:12px;line-height:2;margin-top:12px;color:#8892b0;">
         <div id="installManualStep1">❶ 下载并<b>解压</b> zip 文件</div>
-        <div id="installManualStep2">❷ Chrome 打开 <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">chrome://extensions/</code> → 开启<b>开发者模式</b></div>
+        <div id="installManualStep2">❷ Chrome 打开 <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">chrome://extensions/</code>；Edge 打开 <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">edge://extensions/</code> → 开启<b>开发者模式</b></div>
         <div id="installManualStep3">❸ 点击<b>「加载已解压的扩展程序」</b>→ 选择解压文件夹</div>
         <div id="installManualStep4">❹ 打开插件后，填入秒登服务地址并保存</div>
       </div>
@@ -3794,8 +3844,8 @@
   <div class="step-group">
     <div class="step-title">❸ 安装秒登插件</div>
     <div class="step-list">
-      点击右下角「🔌 安装秒登插件」下载 zip<br>
-      Chrome 打开 <code>chrome://extensions/</code><br>
+      点击右下角「🔌 安装秒登插件」选择 Chrome 或 Edge 版本<br>
+      Chrome 打开 <code>chrome://extensions/</code>，Edge 打开 <code>edge://extensions/</code><br>
       开启「开发者模式」→「加载已解压的扩展」<br>
       首次使用插件会提示输入你的用户名
     </div>
@@ -4189,7 +4239,7 @@
       </div>
       <div class="onboard-step">
         <strong>STEP 2｜插件安装</strong>
-        <p>点击“打开安装弹窗”，按提示安装 Chrome 插件并配置服务器地址。</p>
+        <p>点击“打开安装弹窗”，选择 Chrome 或 Edge 插件并配置服务器地址。</p>
       </div>
       <div class="onboard-step">
         <strong>STEP 3｜连通性测试</strong>
@@ -5272,8 +5322,8 @@ function applyLanguageTexts() {
     ? 'First visit will ask you to set an edit password<br>After login you can add/edit systems and credentials<br>Data is isolated by user'
     : '首次访问会提示设置编辑密码<br>登录后可添加/编辑你的系统及登录凭据<br>每个用户的数据互相隔离';
   if (guideLists[2]) guideLists[2].innerHTML = languageMode === 'en'
-    ? 'Click "🔌 Install Extension" at bottom-right to download zip<br>Open <code>chrome://extensions/</code> in Chrome<br>Enable "Developer mode" → "Load unpacked"<br>First use of plugin will ask your username'
-    : '点击右下角「🔌 安装秒登插件」下载 zip<br>Chrome 打开 <code>chrome://extensions/</code><br>开启「开发者模式」→「加载已解压的扩展」<br>首次使用插件会提示输入你的用户名';
+    ? 'Click "🔌 Install Extension" at bottom-right and choose Chrome or Edge<br>Chrome: <code>chrome://extensions/</code>; Edge: <code>edge://extensions/</code><br>Enable "Developer mode" → "Load unpacked"<br>First use of plugin will ask your username'
+    : '点击右下角「🔌 安装秒登插件」选择 Chrome 或 Edge 版本<br>Chrome 打开 <code>chrome://extensions/</code>，Edge 打开 <code>edge://extensions/</code><br>开启「开发者模式」→「加载已解压的扩展」<br>首次使用插件会提示输入你的用户名';
   if (guideLists[3]) guideLists[3].innerHTML = languageMode === 'en'
     ? 'Click extension icon ⚡ in browser toolbar<br>Click ⚙️ to open settings<br>Set server URL: <code id="guidePluginServer">http://localhost:6680</code><br>Click "Save" and set "User Switch" to your username'
     : '点击浏览器右上角插件图标 ⚡<br>点击右上角 ⚙️ 展开设置<br>填入服务器地址：<code id="guidePluginServer">http://localhost:6680</code><br>点击「保存」，设置「切换用户」为你的用户名';
@@ -5302,15 +5352,22 @@ function applyLanguageTexts() {
   }
 
   setText('#installModalTitle', tr('🔧 安装秒登自动登录插件', '🔧 Install MiaoDeng extension'));
-  setText('#installModalDesc', tr('安装秒登插件后，点击系统卡片即可自动填入凭据并登录。', 'After installing the extension, clicking a system card can auto-fill credentials and sign in.'));
-  setText('#installManualTitle', tr('📦 ZIP 安装（推荐）', '📦 ZIP install (recommended)'));
-  setText('#installManualZipLink', tr('📦 下载插件 ZIP', '📦 Download extension ZIP'));
+  setText('#installModalDesc', tr('根据浏览器选择对应插件包。安装后，点击系统卡片即可自动填入凭据并登录。', 'Choose the package for your browser. After installing it, clicking a system card can auto-fill credentials and sign in.'));
+  setText('#installManualTitle', tr('📦 选择浏览器版本下载', '📦 Choose browser package'));
+  const chromeZipLink = document.getElementById('installChromeZipLink');
+  if (chromeZipLink) chromeZipLink.innerHTML = languageMode === 'en'
+    ? '<strong>🌐 Chrome package</strong><span>For Google Chrome. After unpacking, choose the chrome-extension folder.</span>'
+    : '<strong>🌐 Chrome 版本</strong><span>适用于 Google Chrome，解压后选择 chrome-extension 文件夹。</span>';
+  const edgeZipLink = document.getElementById('installEdgeZipLink');
+  if (edgeZipLink) edgeZipLink.innerHTML = languageMode === 'en'
+    ? '<strong>🌀 Edge package</strong><span>For Microsoft Edge. After unpacking, choose the edge-extension folder.</span>'
+    : '<strong>🌀 Edge 版本</strong><span>适用于 Microsoft Edge，解压后选择 edge-extension 文件夹。</span>';
   const installManualStep1 = document.getElementById('installManualStep1');
   if (installManualStep1) installManualStep1.innerHTML = languageMode === 'en' ? '❶ Download and <b>unpack</b> the ZIP file' : '❶ 下载并<b>解压</b> zip 文件';
   const installManualStep2 = document.getElementById('installManualStep2');
   if (installManualStep2) installManualStep2.innerHTML = languageMode === 'en'
-    ? '❷ Open <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">chrome://extensions/</code> in Chrome → enable <b>Developer mode</b>'
-    : '❷ Chrome 打开 <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">chrome://extensions/</code> → 开启<b>开发者模式</b>';
+    ? '❷ Chrome: <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">chrome://extensions/</code>; Edge: <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">edge://extensions/</code> → enable <b>Developer mode</b>'
+    : '❷ Chrome 打开 <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">chrome://extensions/</code>；Edge 打开 <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">edge://extensions/</code> → 开启<b>开发者模式</b>';
   const installManualStep3 = document.getElementById('installManualStep3');
   if (installManualStep3) installManualStep3.innerHTML = languageMode === 'en' ? '❸ Click <b>"Load unpacked"</b> → choose the unpacked folder' : '❸ 点击<b>「加载已解压的扩展程序」</b>→ 选择解压文件夹';
   const installManualStep4 = document.getElementById('installManualStep4');
@@ -5444,7 +5501,7 @@ function applyLanguageTexts() {
   ]);
   setAllText('#onboardOverlay .onboard-step p', [
     tr('点击“切换用户”或“+ 新用户”，确保你在 ?user=你的名字 模式下。', 'Click "Switch User" or "+ New User" and ensure URL uses ?user=your-name.'),
-    tr('点击“打开安装弹窗”，按提示安装 Chrome 插件并配置服务器地址。', 'Open install modal, then install Chrome extension and configure server URL.'),
+    tr('点击“打开安装弹窗”，选择 Chrome 或 Edge 插件并配置服务器地址。', 'Open install modal, choose Chrome or Edge package, then configure server URL.'),
     tr('点击“测试连通性”，检查后端 API 与首个系统可达性。', 'Run connectivity test to verify API and first system reachability.')
   ]);
   setAllText('#onboardOverlay .onboard-actions button', [

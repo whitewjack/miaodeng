@@ -8,7 +8,7 @@
 ![Release](https://img.shields.io/github/v/release/whitewjack/miaodeng)
 ![CI](https://img.shields.io/github/actions/workflow/status/whitewjack/miaodeng/ci.yml?branch=main)
 
-一个面向团队内部系统的 **自托管自动登录门户 + Chrome 插件**。
+一个面向团队内部系统的 **自托管自动登录门户 + Chrome / Edge 插件**。
 
 它提供统一入口、账号凭据托管、规则化登录页适配、浏览器自动填充与一键跳转，适合测试 / UAT / 运维 / 内部平台等多系统高频登录场景。
 
@@ -72,7 +72,7 @@ python3 --version
 ## 项目组成
 
 - **门户端**：系统卡片、凭据管理、规则中心、更新中心、审计与备份能力
-- **Chrome 插件**：识别当前登录页、拉取凭据、自动填充并提交
+- **Chrome / Edge 插件**：识别当前登录页、拉取凭据、自动填充并提交
 - **规则中心**：把不同系统的登录页差异沉淀为可复用规则
 
 ## 主要特性
@@ -161,11 +161,11 @@ server {
 
 1. 打开秒登门户
 2. 点击右下角 **「🔌 安装秒登插件」**
-3. 下载 ZIP 并解压
-4. 在 Chrome 打开 `chrome://extensions/`
+3. 按浏览器下载 **Chrome 版本**或 **Edge 版本** ZIP 并解压
+4. Chrome 打开 `chrome://extensions/`；Edge 打开 `edge://extensions/`
 5. 开启 **开发者模式**
 6. 点击 **加载已解压的扩展程序**
-7. 选择解压后的 `chrome-extension` 目录
+7. Chrome 选择解压后的 `chrome-extension` 目录；Edge 选择 `edge-extension` 目录
 8. 打开插件，填写秒登服务地址并保存
 9. 设置“切换用户”为你的用户名
 
@@ -212,7 +212,7 @@ docker compose config
 
 ```text
 .
-├── chrome-extension/        # Chrome 插件源码
+├── chrome-extension/        # Chrome / Edge 插件源码
 ├── data/                    # 运行时数据（不提交）
 ├── deploy/                  # 部署相关配置
 ├── docs/                    # 项目文档导航与补充说明
@@ -240,9 +240,9 @@ docker compose config
 
 ## 常见问题
 
-### Chrome 提示“禁用开发者模式扩展”
+### Chrome / Edge 提示“禁用开发者模式扩展”
 
-这是 Chrome 的正常安全提示，点击“保留”即可。
+这是浏览器的正常安全提示，点击“保留”即可。
 
 ### 插件无法自动填充
 

@@ -428,6 +428,8 @@ class ServerApiTest(unittest.TestCase):
         self.assertIn("uptime_seconds", payload.get("server", {}))
         self.assertIn("version", payload.get("portal", {}))
         self.assertIn("latest_version", payload.get("plugin", {}))
+        self.assertIn("edge_version", payload.get("plugin", {}))
+        self.assertEqual(payload.get("plugin", {}).get("edge_archive_url"), "/auto-login-extension-edge.zip")
 
     def test_open_source_stats_prefers_local_release_when_github_api_fails(self):
         self.srv.OPEN_SOURCE_STATS_CACHE.clear()

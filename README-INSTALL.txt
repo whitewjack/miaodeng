@@ -1,4 +1,4 @@
-秒登 MiaoDeng - Chrome 插件安装说明
+秒登 MiaoDeng - Chrome / Edge 插件安装说明
 ========================================
 
 📦 推荐安装方式：ZIP 安装
@@ -6,11 +6,13 @@
 安装步骤：
 
 1. 解压此 ZIP 文件到任意位置
-2. 打开 Chrome 浏览器
-3. 地址栏输入：chrome://extensions/
+2. 打开对应浏览器
+3. Chrome 地址栏输入：chrome://extensions/
+   Edge 地址栏输入：edge://extensions/
 4. 开启右上角的“开发者模式”开关
 5. 点击“加载已解压的扩展程序”
-6. 选择解压后的 “chrome-extension” 文件夹
+6. Chrome 选择解压后的 “chrome-extension” 文件夹
+   Edge 选择解压后的 “edge-extension” 文件夹
 7. 安装完成！✅
 
 ⚙️ 配置：
@@ -23,8 +25,8 @@
 
 ❓ 常见问题：
 
-Q: 每次打开 Chrome 提示“禁用开发者模式扩展”？
-A: 点击“保留”即可，这是 Chrome 的安全提醒。
+Q: 每次打开浏览器提示“禁用开发者模式扩展”？
+A: 点击“保留”即可，这是浏览器的安全提醒。
 
 Q: 无法自动填充？
 A: 检查服务器地址和用户名是否正确。
